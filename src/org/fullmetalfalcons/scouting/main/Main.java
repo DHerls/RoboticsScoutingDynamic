@@ -9,7 +9,7 @@ import org.fullmetalfalcons.scouting.teams.Team;
 import java.util.ArrayList;
 
 /**
- * Created by djher on 1/11/2016.
+ * Created by Dan on 1/11/2016.
  */
 public class Main {
 

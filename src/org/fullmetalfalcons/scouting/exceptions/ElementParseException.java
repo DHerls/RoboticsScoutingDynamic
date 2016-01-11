@@ -1,7 +1,7 @@
 package org.fullmetalfalcons.scouting.exceptions;
 
 /**
- * Created by djher on 1/11/2016.
+ * Created by Dan on 1/11/2016.
  */
 public class ElementParseException extends Exception {
 

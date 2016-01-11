@@ -11,20 +11,26 @@ import java.io.*;
 import java.text.ParseException;
 
 /**
- * Created by djher on 1/11/2016.
+ * Handles file input
+ *
+ * Created by Dan on 1/11/2016.
  */
 public class Reader {
 
     private static final String CONFIG_FILE_NAME = "config.txt";
     private static final String PLIST_PATH = "plists/";
 
+    /**
+     *Loads the config file and assigns the lines to elements
+     */
     public static void loadConfig(){
         try (BufferedReader reader = new BufferedReader(new FileReader(CONFIG_FILE_NAME));){
 
             String line;
-
+            //While there are still lines in the file
             while((line=reader.readLine())!=null){
-                if (!line.isEmpty() && line.length()>2 && !line.substring(0,2).equals("##")){
+                //If the line does not start with ##, which indicates a comment
+                if (line.length()>2 && !line.substring(0,2).equals("##")){
                     //System.out.println(line);
                     Main.addElement(line);
                 }
@@ -38,6 +44,9 @@ public class Reader {
 
     }
 
+    /**
+     * Loads .plist files from the specified directory and creates Team Objects based off of them
+     */
     public static void loadPlists(){
         File plistDirectory = new File(PLIST_PATH);
         //Only retrieve files that end in ".plist"
