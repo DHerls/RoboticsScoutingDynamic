@@ -9,6 +9,8 @@ import org.fullmetalfalcons.scouting.teams.Team;
 import java.util.ArrayList;
 
 /**
+ * Main class
+ *
  * Created by Dan on 1/11/2016.
  */
 public class Main {
