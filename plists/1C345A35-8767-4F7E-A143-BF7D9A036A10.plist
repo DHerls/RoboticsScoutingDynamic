@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key></key>
+	<string></string>
+	<key>k1</key>
+	<string>No</string>
+	<key>k11</key>
+	<integer>3</integer>
+	<key>k2</key>
+	<string>No selection</string>
+	<key>k3</key>
+	<string>2</string>
+	<key>k4</key>
+	<integer>2</integer>
+	<key>k5</key>
+	<integer>1</integer>
+	<key>k6</key>
+	<string>Try/Fail</string>
+	<key>k7</key>
+	<string>0</string>
+	<key>k8</key>
+	<string>88</string>
+	<key>k9</key>
+	<integer>2</integer>
+	<key>match_num</key>
+	<integer>99</integer>
+	<key>team_num</key>
+	<integer>55</integer>
+</dict>
+</plist>
