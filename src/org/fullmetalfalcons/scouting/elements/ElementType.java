@@ -11,7 +11,8 @@ public enum ElementType {
     SEGMENTED_CONTROL("segmented_control"),
     TEXTFIELD("textfield"),
     STEPPER("stepper"),
-    LABEL("label");
+    LABEL("label"),
+    SWITCH("switch");
 
     private String key;
 

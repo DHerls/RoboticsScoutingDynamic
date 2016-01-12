@@ -1,35 +1,36 @@
-## Format= [Element];;[Label Title];;[Key]
 ## The program is broken up in parts for each by two semicolons (;;) for the sake of readability. The program will not work for only one semicolon. Two are required.
 
 ## For elements {SEGMENTED_CONTROL, TEXTFIELD, STEPPER, LABEL}
 ## 		SEGMENTED_CONTROL args=[<Selection 1, Selection 2,Selection n>]
+##			Format= SEGMENTED_CONTROL<args>;;[Title];;[Key]
 ##			For example, for a segmented control with options "Yes No Try/Fail" titled "Scored Goals" would look like
 ##			SEGMENTED_CONTROL <Yes,No,Try/Fail>;;Scored Goals;;teleop_scored_goals
 ##		TEXTFIELD args=[<keyboard type>] where type is any of the following... {decimal, number, normal}
+##			Format= TEXTFIELD<args>;;[Title];;[Key]
 ##			For example, making a textfield with the title "Points Scored" would look like
 ##			TEXTFIELD;;Points Scored;;total_points_scored
 ##		STEPPER args=[<lower bound, upper bound>]
+##			Format= STEPPER<args>;;[Title];;[Key]
 ##			For example a stepper that operated between bounds 0 and 5 inclusive titled "Boxes stacked" would look like
 ##			STEPPER <0,5>;;Boxed stacked;;teleop_boxes_stacked
 ##		LABEL args=[<type, justification>] where type is any of the following... {bold, normal, distinguished} and justification is {left, center, right}
+##			Format= LABEL;;[Label Title]
 ##			For example a label titled "Autonomous" that is clear by drawing lines around it would look like the following
-##			LABEL <distinguished>;;"Autonomous";;null
-##			Note that the key is null, since a label doesn't need a key to be associated with it because it is not involved in data collection
+##			LABEL <distinguished>;;"Autonomous"
+##		SWITCH args=[<Title 1, title 2, title n...>];;[<key 1, key 2, key n...>]
+##			Format= SWITCH<args titles>;;<args keys>
+##			For example a series of switchs with titles "Passes one", and "Passes two" would look like
+##			SWITCH <Passes one, Passes two>;;<aut_passes1, aut_passes2>
+##			There are a maximum of 6 switches in a single line.
 
-LABEL <distinguished, center>;;Autonomous;;null
-SEGMENTED_CONTROL <Yes,No,Try/Fail>;;Moves to autozone;;sample_key_1
-SEGMENTED_CONTROL <0,1,2,3>;;Number of totles interacted with;;sample_key_2
-SEGMENTED_CONTROL <0,1,2,3>;;Number of yellow totes moved to autozone;;sample_key_3
+LABEL <distinguished, center>;;Autonomous
+SEGMENTED_CONTROL <Yes,No,Try/Fail>;;Reaches defenses?;;aut_reaches_defenses
+SEGMENTED_CONTROL <Yes,No,Try/Fail>;;Crosses defenses?;;aut_crosses_defenses
+SEGMENTED_CONTROL <High tower,Low Tower,Try/Fail, None>;;Scores tower?;;aut_shoots
 
-LABEL <distinguished, center>;; Teleop;; null
-STEPPER <0,7>;;Totes Scored;;sample_key_4
-STEPPER <0,7>;;Highest Stack;;sample_key_5
-SEGMENTED_CONTROL <No,Yes,Try/Fail>;;Can they easily run over noodles?;;sample_key_6
-STEPPER <0,7>;;Knocked over totes/stax;;sample_key_7
-TEXTFIELD <number>;;Total Points;; sample_key_8
-
-LABEL <distinguished, center>;;Human players;;null
-STEPPER <0,7>;;Fouls against;;sample_key_9
-LABEL <normal, left>;;Noodles thrown...;;sample_key_10
-STEPPER <0,7>;;in own landfill;;sample_key_11
-
+LABEL <distinguished, center>;;TeleOp
+SEGMENTED_CONTROL <Neutral Zone, Spy>;;Starting Positions;;teleop_starting_position
+LABEL <normal, left>;;Can overcome defencse (check all that apply)
+SWITCH;;Portcullis,Cheval Frise,Moat,Ramparts;;teleop_portcullis,teleop_chevalDeFrise,teleop_moat,teleop_ramparts
+SWITCH;;Drawbridge,Sally Port,Rock wall,Rough Terrain;;teleop_drawbridge,teleop_sallyport,teleop_rockwall,teleop_rough_terrain
+SEGMENTED_CONTROL <Yes,No,Try/Fail>;;Can pass under low bar;;teleop_underLowBar
