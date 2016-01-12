@@ -8,7 +8,6 @@ import org.fullmetalfalcons.scouting.fileio.Writer;
 import org.fullmetalfalcons.scouting.teams.Team;
 
 import javax.swing.*;
-import java.io.IOException;
 import java.util.ArrayList;
 
 /**
@@ -21,7 +20,7 @@ public class Main {
     private static final ArrayList<Element> ELEMENTS = new ArrayList<>();
     private static final ArrayList<Team> TEAMS = new ArrayList<>();
     //Console spam
-    private static boolean debug = false;
+    private static final boolean DEBUG = true;
 
     public static void main(String args[]){
         try {
@@ -70,6 +69,11 @@ public class Main {
         return TEAMS;
     }
 
+    /**
+     * Sends an error message to the user with a JOptionPane
+     *
+     * @param message error message to send
+     */
     public static void sendError(String message){
         try {
             JOptionPane.showMessageDialog(null, message,
@@ -81,7 +85,7 @@ public class Main {
     }
 
     public static void debug(String message){
-        if (debug){
+        if (DEBUG){
             System.out.println(message);
         }
     }
