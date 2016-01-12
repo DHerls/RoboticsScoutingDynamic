@@ -1,7 +1,10 @@
 package org.fullmetalfalcons.scouting.fileio;
 
+import org.apache.poi.hssf.util.HSSFColor;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.ss.util.CellRangeAddress;
+import org.apache.poi.xssf.usermodel.XSSFColor;
+import org.apache.poi.xssf.usermodel.XSSFFont;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.fullmetalfalcons.scouting.elements.Element;
 import org.fullmetalfalcons.scouting.elements.ElementType;
@@ -10,6 +13,7 @@ import org.fullmetalfalcons.scouting.teams.Team;
 
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.ArrayList;
 
 /**
  * Writes out to an Excel document
@@ -20,8 +24,14 @@ public class Writer {
 
     private static Workbook wb;
     private static Sheet s;
-    private static CellStyle headerStyle;
 
+    private static CellStyle headerStyle;
+    private static CellStyle sectionEndStyle;
+    private static CellStyle redStyle;
+    private static CellStyle blueStyle;
+    private static CellStyle superSecretSpecialStyle;
+
+    private static ArrayList<Integer> endColumns = new ArrayList<>();
 
     public static void write() throws IOException {
         wb = new XSSFWorkbook();
@@ -46,6 +56,9 @@ public class Writer {
             c = r.createCell(0);
             Object o = t.getValue(Team.NUMBER_KEY);
             c.setCellValue(Integer.parseInt(o.toString()));
+            if (Integer.parseInt(o.toString())==4557){
+                c.setCellStyle(superSecretSpecialStyle);
+            }
 
             c = r.createCell(1);
             o = t.getValue(Team.MATCH_KEY);
@@ -54,6 +67,12 @@ public class Writer {
             c = r.createCell(2);
             o = t.getValue(Team.COLOR_KEY);
             c.setCellValue(o.toString());
+            if (o.toString().toLowerCase().equals("red")){
+                c.setCellStyle(redStyle);
+            } else {
+                c.setCellStyle(blueStyle);
+            }
+
 
             int columnNum = 3;
             for (Element e: Main.getElements()){
@@ -68,6 +87,10 @@ public class Writer {
                             } catch (NumberFormatException e2){
                                 c.setCellValue(t.getValue(key).toString());
                             }
+                        }
+
+                        if (endColumns.contains(columnNum)){
+                            c.setCellStyle(sectionEndStyle);
                         }
 
                         columnNum++;
@@ -96,6 +119,28 @@ public class Writer {
         headerStyle.setBorderLeft(CellStyle.BORDER_THIN);
         headerStyle.setBorderRight(CellStyle.BORDER_THIN);
         headerStyle.setAlignment(CellStyle.ALIGN_CENTER);
+
+        sectionEndStyle = wb.createCellStyle();
+        sectionEndStyle.setBorderRight(CellStyle.BORDER_THIN);
+
+        redStyle = wb.createCellStyle();
+        redStyle.setBorderRight(CellStyle.BORDER_THIN);
+        Font redFont = wb.createFont();
+        redFont.setColor(HSSFColor.RED.index);
+        redStyle.setFont(redFont);
+
+        blueStyle = wb.createCellStyle();
+        blueStyle.setBorderRight(CellStyle.BORDER_THIN);
+        Font blueFont = wb.createFont();
+        blueFont.setColor(HSSFColor.BLUE.index);
+        blueStyle.setFont(blueFont);
+
+        superSecretSpecialStyle = wb.createCellStyle();
+        Font superSecretSpecialFont = wb.createFont();
+        superSecretSpecialFont.setColor(HSSFColor.GOLD.index);
+        superSecretSpecialFont.setBoldweight(Font.BOLDWEIGHT_BOLD);
+        superSecretSpecialFont.setItalic(true);
+        superSecretSpecialStyle.setFont(superSecretSpecialFont);
     }
 
     private static void createHeader() {
@@ -122,6 +167,8 @@ public class Writer {
 
         s.addMergedRegion(new CellRangeAddress(0,0,0,2));
 
+        endColumns.add(3);
+
         int labelStart = 3;
         int headerPosition = 3;
 
@@ -134,6 +181,7 @@ public class Writer {
                         c.setCellStyle(headerStyle);
                         if (headerPosition!=3){
                             s.addMergedRegion(new CellRangeAddress(0,0,labelStart,headerPosition-1));
+                            endColumns.add(headerPosition-1);
                         }
                         labelStart = headerPosition;
                     }
@@ -157,6 +205,7 @@ public class Writer {
         }
 
         s.addMergedRegion(new CellRangeAddress(0,0,labelStart,headerPosition-1));
+        endColumns.add(headerPosition-1);
         s.setAutoFilter(new CellRangeAddress(1,1,0,headerPosition-1));
 
     }
