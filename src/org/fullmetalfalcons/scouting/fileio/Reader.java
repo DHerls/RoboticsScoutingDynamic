@@ -24,8 +24,8 @@ public class Reader {
      *Loads the config file and assigns the lines to elements
      */
     public static void loadConfig(){
-        try (BufferedReader reader = new BufferedReader(new FileReader(CONFIG_FILE_NAME));){
-
+        try (BufferedReader reader = new BufferedReader(new FileReader(CONFIG_FILE_NAME))){
+            Main.debug("Config file " + CONFIG_FILE_NAME + " loaded");
             String line;
             //While there are still lines in the file
             while((line=reader.readLine())!=null){
@@ -56,10 +56,12 @@ public class Reader {
                 return name.endsWith(".plist");
             }
         });
-
+        Main.debug(plistFiles.length + " plists discovered");
         for (File f: plistFiles){
+            Main.debug("Loading plist " + f.getName());
             try {
                 NSDictionary rootDict = (NSDictionary) PropertyListParser.parse(f);
+                Main.debug("Discovered " + rootDict.size() + " key/value pairs");
                 Main.addTeam(rootDict);
             } catch (IOException | PropertyListFormatException | ParserConfigurationException | ParseException | SAXException e) {
                 e.printStackTrace();

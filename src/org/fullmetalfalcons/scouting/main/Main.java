@@ -7,6 +7,7 @@ import org.fullmetalfalcons.scouting.fileio.Reader;
 import org.fullmetalfalcons.scouting.fileio.Writer;
 import org.fullmetalfalcons.scouting.teams.Team;
 
+import javax.swing.*;
 import java.io.IOException;
 import java.util.ArrayList;
 
@@ -19,30 +20,45 @@ public class Main {
 
     private static final ArrayList<Element> ELEMENTS = new ArrayList<>();
     private static final ArrayList<Team> TEAMS = new ArrayList<>();
+    //Console spam
+    private static boolean debug = false;
 
     public static void main(String args[]){
-        Reader.loadConfig();
-        Reader.loadPlists();
-
         try {
+            log("Program Starting");
+            log("Starting to load configuration");
+            Reader.loadConfig();
+            log(ELEMENTS.size() + " elements loaded");
+            log("Starting to load plists");
+            Reader.loadPlists();
+            log(TEAMS.size() + " teams loaded");
+            log("Starting to write file");
             Writer.write();
-        } catch (IOException e) {
-            e.printStackTrace();
+            log("Results saved to " + Writer.FILENAME);
+            log("Exiting program");
+            System.exit(0);
+        } catch(Exception e){
+            sendError("Unknown error occurred: " + e.toString());
+            System.exit(-1);
         }
+
+
     }
 
     public static void addElement(String line){
 
         try {
             Element e = new Element(line);
+            debug("Element of type " + e.getType().toString() + " created");
             ELEMENTS.add(e);
         } catch (ElementParseException e) {
-            e.printStackTrace();
+            sendError("Config error: " + e.getMessage());
         }
     }
 
     public static void addTeam(NSDictionary dictionary){
         Team t = new Team(dictionary);
+        debug("Team " + t.getValue(Team.NUMBER_KEY) + " loaded");
         TEAMS.add(t);
     }
 
@@ -52,5 +68,25 @@ public class Main {
 
     public static ArrayList<Team> getTeams() {
         return TEAMS;
+    }
+
+    public static void sendError(String message){
+        try {
+            JOptionPane.showMessageDialog(null, message,
+                    "You done messed up", JOptionPane.ERROR_MESSAGE);
+        } catch (Exception e){
+            JOptionPane.showMessageDialog(null, "An error occurred while displaying an error",
+                    "Yo Dawg!", JOptionPane.ERROR_MESSAGE);
+        }
+    }
+
+    public static void debug(String message){
+        if (debug){
+            System.out.println(message);
+        }
+    }
+
+    public static void log(String message){
+        System.out.println(message);
     }
 }
