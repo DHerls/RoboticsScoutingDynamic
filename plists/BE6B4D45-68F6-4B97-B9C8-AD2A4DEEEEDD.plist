@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key></key>
+	<string></string>
+	<key>aut_crosses_defenses</key>
+	<string>No selection</string>
+	<key>aut_reaches_defenses</key>
+	<string>No selection</string>
+	<key>aut_shoots</key>
+	<string>No selection</string>
+	<key>match_num</key>
+	<integer>66</integer>
+	<key>team_color</key>
+	<string>Red</string>
+	<key>team_num</key>
+	<integer>4557</integer>
+	<key>teleop_chevalDeFrise</key>
+	<string>No</string>
+	<key>teleop_drawbridge</key>
+	<string>No</string>
+	<key>teleop_moat</key>
+	<string>No</string>
+	<key>teleop_portcullis</key>
+	<string>No</string>
+	<key>teleop_ramparts</key>
+	<string>No</string>
+	<key>teleop_rockwall</key>
+	<string>No</string>
+	<key>teleop_rough_terrain</key>
+	<string>No</string>
+	<key>teleop_sallyport</key>
+	<string>No</string>
+	<key>teleop_starting_position</key>
+	<string>No selection</string>
+	<key>teleop_underLowBar</key>
+	<string>No selection</string>
+</dict>
+</plist>
