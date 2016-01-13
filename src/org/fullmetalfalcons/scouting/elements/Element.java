@@ -19,9 +19,8 @@ public class Element {
     private String[] arguments;
 
     //The below elements are used to capture the data between arrows <Like this>
-    private String argumentRegex = "<(.*?)>";
-    private Pattern argumentPattern = Pattern.compile(argumentRegex);
-    private Matcher argumentMatcher;
+    private final String argumentRegex = "<(.*?)>";
+    private final Pattern argumentPattern = Pattern.compile(argumentRegex);
 
 
     /**
@@ -36,29 +35,21 @@ public class Element {
     }
 
     /**
-     * Breaks the line apart and assignes its parts to different variables.
+     * Breaks the line apart and assigns its parts to different variables.
      *
-     * @param line
-     * @throws ElementParseException
+     * @param line Line to be parsed
+     * @throws ElementParseException If the line to be parsed is malformed
      */
     private void parseString(String line) throws ElementParseException {
         //Arguments in the config file should be separated by ";;"
         String[] splitLine = line.split(";;");
 
-        //There should be no more and no less than three arguments per line
-        /*
-        if (splitLine.length!=3){
-            throw new ElementParseException("Incorrect number of arguments, 3 expected: " + splitLine[0]);
-        }
-         */
 
-        argumentMatcher = argumentPattern.matcher(splitLine[0]);
+        Matcher argumentMatcher = argumentPattern.matcher(splitLine[0]);
         //Checks to see if there is any information <like this> in the first portion of the line
         if (argumentMatcher.find()){
             arguments = argumentMatcher.group(1).split(",");
-        } //else {
-            //throw new ElementParseException("Type arguments not found: " + splitLine[0]);
-        //}
+        }
 
         //Retrieves the ElementType based on the portion of the first section not in <> i.e. LABEL
         type = ElementType.getElement(splitLine[0].replaceAll(argumentRegex,"").trim());
@@ -67,7 +58,8 @@ public class Element {
         }
 
 
-        if (type==ElementType.SWITCH){
+        //Labels don't have keys, so they need to be parsed differently
+        if (type!=ElementType.LABEL){
             //Get Descriptions
             String descriptions = splitLine[1];
             String[] descriptionList = descriptions.split(",");
@@ -84,11 +76,6 @@ public class Element {
             }
             this.keys = keyList;
 
-        } else if (type!=ElementType.LABEL){
-            keys = new String[1];
-            keys[0] = splitLine[2].trim();
-            descriptions = new String[1];
-            descriptions[0] = splitLine[1].trim();
         } else {
             descriptions = new String[1];
             descriptions[0] = splitLine[1].trim();

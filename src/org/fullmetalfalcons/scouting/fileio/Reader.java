@@ -28,16 +28,17 @@ public class Reader {
             String line;
             //While there are still lines in the file
             while((line=reader.readLine())!=null){
-                //If the line does not start with ##, which indicates a comment
-                if (line.length()>2 && !line.substring(0,2).equals("##")){
-                    //System.out.println(line);
+                //If the line does not start with ##, which indicates a comment, and @ which indicated an eqation
+                if (line.length()>2 && !line.substring(0,2).equals("##") && line.charAt(0)!='@'){
+                    //Attempt to add an Element to the main array
                     Main.addElement(line);
                 }
 
             }
 
         } catch (IOException e) {
-            e.printStackTrace();
+            Main.sendError("Something is very wrong with the config file. It's probably missing. Try and find it.");
+            System.exit(-1);
         }
 
 
@@ -45,7 +46,7 @@ public class Reader {
 
     /**
      * Loads .plist files from the specified directory and creates Team Objects based off of them
-     * @param arg
+     * @param arg The location of the directory which contains plists
      */
     public static void loadPlists(String arg){
         File plistDirectory = new File(arg);
@@ -60,12 +61,15 @@ public class Reader {
         for (File f: plistFiles){
             Main.debug("Loading plist " + f.getName());
             try {
+                //Attempt to load the plist into an NSDictionary, which is basically a HashMap
                 NSDictionary rootDict = (NSDictionary) PropertyListParser.parse(f);
                 Main.debug("Discovered " + rootDict.size() + " key/value pairs");
+
+                //If it successfully creates an NSDictionary, it passes it to a Team object
                 Main.addTeam(rootDict);
             } catch (IOException | PropertyListFormatException | ParserConfigurationException | ParseException | SAXException e) {
-                Main.sendError("An error has occurred with one of the plists: " + f.getName() + "\n" + e.getMessage());
-            } catch (IllegalArgumentException e){
+                Main.sendError("An error has occurred with one of the plists: " + f.getName() + "\n" + e.getLocalizedMessage());
+            } catch (IllegalArgumentException | IndexOutOfBoundsException e){
                 Main.sendError("Someone has changed the plists... and they did a bad job");
             }
         }

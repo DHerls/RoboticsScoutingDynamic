@@ -14,7 +14,7 @@ public enum ElementType {
     LABEL("label"),
     SWITCH("switch");
 
-    private String key;
+    private final String key;
 
     ElementType(String key){
         this.key = key;
@@ -35,7 +35,7 @@ public enum ElementType {
         return null;
     }
 
-    public String getKey(){
+    private String getKey(){
         return key;
     }
 }

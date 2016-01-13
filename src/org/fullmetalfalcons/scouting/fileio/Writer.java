@@ -30,19 +30,31 @@ public class Writer {
     private static CellStyle blueStyle;
     private static CellStyle superSecretSpecialStyle;
 
-    private static ArrayList<Integer> endColumns = new ArrayList<>();
+    private static final ArrayList<Integer> endColumns = new ArrayList<>();
 
     public static final String FILENAME = "results.xlsx";
 
+    /**
+     * Only public method, compiles data and writes it out to an excel workbook
+     */
     public static void write(){
         Main.debug("Creating workbook");
+        //Create a new workbook
         wb = new XSSFWorkbook();
         Main.debug("Creating sheet");
+        //Create a new sheet in the workbook with the name "Results"
         s = wb.createSheet("Results");
 
+        //Create CellStyles for use later
         generateStyles();
+
+        //Generate the first two rows of the sheet form the available Elements
         createHeader();
+
+        //Add Team data to the sheet
         addData();
+
+        //Make the columns an appropriate width
         autoSize();
         Main.debug("Attempting to save workbook");
 
@@ -57,6 +69,7 @@ public class Writer {
                 Main.sendError("Close the Excel workbook! Press OK when done.");
             }
         }
+        Main.log("Results saved to " + Writer.FILENAME);
 
 
     }
@@ -67,7 +80,7 @@ public class Writer {
         int rowNum = 2;
         Row r;
         for (Team t: Main.getTeams()){
-            Main.debug("Adding data for team " + t.getValue(Team.NUMBER_KEY).toString());
+            Main.debug("Adding data for team " + t.getValue(Team.NUMBER_KEY));
             r = s.createRow(rowNum);
 
             c = r.createCell(0);
@@ -109,13 +122,19 @@ public class Writer {
                     for (String key: e.getKeys()){
                         c = r.createCell(columnNum);
                         try{
-                            c.setCellValue(Integer.parseInt(t.getValue(key).toString()));
+                            c.setCellValue(Integer.parseInt(t.getValue(key)));
                         } catch (NumberFormatException e1){
                             try {
-                                c.setCellValue(Double.parseDouble(t.getValue(key).toString()));
+                                c.setCellValue(Double.parseDouble(t.getValue(key)));
                             } catch (NumberFormatException e2){
-                                c.setCellValue(t.getValue(key).toString());
+                                if (t.getValue(key).length()>(key.length()+10)){
+
+                                }
+                                c.setCellValue(t.getValue(key));
                             }
+                        } catch (NullPointerException e1){
+                            Main.sendError("Plist is missing key \"" + key + ",\" which is impressive.");
+                            c.setCellValue("MISSING VALUE");
                         }
 
                         if (endColumns.contains(columnNum)){
@@ -133,10 +152,20 @@ public class Writer {
     private static void autoSize() {
         Main.debug("Autosizing Columns");
         int width;
+        Row r = s.getRow(1);
+        Cell c;
         for (int i = 0; i<50;i++){
-            s.autoSizeColumn(i,true);
-            width = s.getColumnWidth(i);
-            s.setColumnWidth(i,width+1100);
+            c = r.getCell(i);
+            if (c!=null){
+               switch(c.getCellType()){
+                   case Cell.CELL_TYPE_STRING:
+                       s.setColumnWidth(i,c.getStringCellValue().length()*300+1200);
+                       break;
+                   case Cell.CELL_TYPE_NUMERIC:
+                       s.setColumnWidth(i,String.valueOf(c.getNumericCellValue()).length()*100+1100);
+                       break;
+               }
+            }
         }
 
         s.createFreezePane(0,2);

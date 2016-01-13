@@ -27,6 +27,7 @@ public class Main {
 
     public static void main(String args[]){
         try {
+            //Program needs to be told where to look for the plist files
             if(args.length==0){
                 sendError("You have not provided a location for plists");
                 System.exit(-1);
@@ -34,15 +35,27 @@ public class Main {
 
             log("Program Starting");
             log("Starting to load configuration");
+
+            //Populates ELEMENTS ArrayList from configuration file
             Reader.loadConfig();
+
             log(ELEMENTS.size() + " elements loaded");
+
             log("Starting to load plists");
+
+            //Populates TEAMS ArrayList from plist files, passes location of plists
             Reader.loadPlists(args[0]);
+
             log(TEAMS.size() + " teams loaded");
+
             log("Starting to write file");
+
+            //Writes data to Excel spreadsheet
             Writer.write();
-            log("Results saved to " + Writer.FILENAME);
+
+            //Asks user if they would like to open the Excel workbook
             exitDialogue();
+
             log("Exiting program");
             System.exit(0);
         } catch(Exception e){
@@ -55,7 +68,7 @@ public class Main {
     }
 
     private static void exitDialogue() throws IOException {
-        int result = JOptionPane.showConfirmDialog(null, "Results have been saved to \"results.xlsx.\" Would you like to open it now?",
+        int result = JOptionPane.showConfirmDialog(null, "Results have been saved to \"results.xlsx.\" Would you like to open the workbook now?",
                 "Done!", JOptionPane.YES_NO_OPTION);
         if (result==JOptionPane.YES_OPTION){
             try {
@@ -66,9 +79,15 @@ public class Main {
         }
     }
 
+    /**
+     * Creates an Element from a line provided from the config file
+     *
+     * @param line The line from the config file
+     */
     public static void addElement(String line){
 
         try {
+            //If something is wrong with "line" the new element will thrown an ElementParseException
             Element e = new Element(line);
             debug("Element of type " + e.getType().toString() + " created");
             ELEMENTS.add(e);
@@ -77,6 +96,11 @@ public class Main {
         }
     }
 
+    /**
+     * Creates a Team Object which essentially just holds an NSDictionary
+     *
+     * @param dictionary Holds the key/value pairs for the team
+     */
     public static void addTeam(NSDictionary dictionary){
         Team t = new Team(dictionary);
         debug("Team " + t.getValue(Team.NUMBER_KEY) + " loaded");
