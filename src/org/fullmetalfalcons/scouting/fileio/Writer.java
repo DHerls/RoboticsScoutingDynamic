@@ -71,24 +71,32 @@ public class Writer {
             r = s.createRow(rowNum);
 
             c = r.createCell(0);
-            Object o = t.getValue(Team.NUMBER_KEY);
+            String value = t.getValue(Team.NUMBER_KEY);
             try {
-                c.setCellValue(Integer.parseInt(o.toString()));
-                if (Integer.parseInt(o.toString()) == 4557) {
+                c.setCellValue(Integer.parseInt(value));
+                if (value.hashCode()==1601763) {
                     c.setCellStyle(superSecretSpecialStyle);
                 }
             } catch (NumberFormatException e1){
-                Main.sendError(o.toString() + " is not a team number! (You should be proud of getting this error)");
+                Main.sendError(value + " is not a team number! (You should be proud of getting this error)");
             }
 
             c = r.createCell(1);
-            o = t.getValue(Team.MATCH_KEY);
-            c.setCellValue(Integer.parseInt(o.toString()));
+            value = t.getValue(Team.MATCH_KEY);
+
+            try {
+
+                c.setCellValue(Integer.parseInt(value));
+            } catch (NumberFormatException e1){
+                Main.sendError(value + " is not a match number! (You should be proud of getting this error)");
+            }
+
+
 
             c = r.createCell(2);
-            o = t.getValue(Team.COLOR_KEY);
-            c.setCellValue(o.toString());
-            if (o.toString().toLowerCase().equals("red")){
+            value = t.getValue(Team.COLOR_KEY);
+            c.setCellValue(value);
+            if (value.toLowerCase().equals("red")){
                 c.setCellStyle(redStyle);
             } else {
                 c.setCellStyle(blueStyle);

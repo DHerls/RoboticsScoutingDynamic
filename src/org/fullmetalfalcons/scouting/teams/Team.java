@@ -19,7 +19,7 @@ public class Team {
         this.dictionary = dictionary;
     }
 
-    public Object getValue(String key) {
-        return dictionary.get(key).toJavaObject();
+    public String getValue(String key) {
+        return dictionary.get(key).toJavaObject().toString();
     }
 }

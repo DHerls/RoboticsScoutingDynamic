@@ -20,10 +20,11 @@ public class Main {
     private static final ArrayList<Element> ELEMENTS = new ArrayList<>();
     private static final ArrayList<Team> TEAMS = new ArrayList<>();
     //Console spam
-    private static final boolean DEBUG = true;
+    private static final boolean DEBUG = false;
 
     public static void main(String args[]){
         try {
+            log("4557".hashCode()+"");
             log("Program Starting");
             log("Starting to load configuration");
             Reader.loadConfig();
