@@ -39,8 +39,7 @@ LABEL <normal, center>;;Can overcome defense (check all that apply)
 SWITCH;;Portcullis,Cheval Frise,Moat,Ramparts;;aut_portcullis,aut_chevalDeFrise,aut_moat,aut_ramparts
 SWITCH;;Drawbridge,Sally Port,Rock wall,Rough Terrain;;aut_drawbridge,aut_sallyport,aut_rockwall,aut_rough_terrain
 SEGMENTED_CONTROL <High tower,Low Tower,Try/Fail, None>;;Scores tower?;;aut_shoots
-
-SEGMENTED_CONTROL <Yes,No,Try/Fail>;;Can pass under low bar;;teleop_underLowBar
+SEGMENTED_CONTROL <Yes,No,Try/Fail>;;Can pass under low bar;;aut_underLowBar
 
 LABEL <distinguished, center>;;TeleOp
 SEGMENTED_CONTROL <Neutral Zone, Spy>;;Starting Positions;;teleop_starting_position

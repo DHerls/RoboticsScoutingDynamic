@@ -28,10 +28,15 @@ public class Reader {
             String line;
             //While there are still lines in the file
             while((line=reader.readLine())!=null){
+                if (line.length()<2){
+                    continue;
+                }
                 //If the line does not start with ##, which indicates a comment, and @ which indicated an eqation
-                if (line.length()>2 && !line.substring(0,2).equals("##") && line.charAt(0)!='@'){
+                if (!line.substring(0,2).equals("##") && line.charAt(0)!='@'){
                     //Attempt to add an Element to the main array
                     Main.addElement(line);
+                } else if (line.charAt(0)=='@'){
+                    Main.addEquation(line.replace("@EQUATION","").trim());
                 }
 
             }

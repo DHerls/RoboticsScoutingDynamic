@@ -10,6 +10,26 @@
 	<string>No</string>
 	<key>aut_shoots</key>
 	<string>No selection</string>
+    <key>aut_chevalDeFrise</key>
+    <string>No</string>
+    <key>aut_drawbridge</key>
+    <string>No</string>
+    <key>aut_moat</key>
+    <string>No</string>
+    <key>aut_portcullis</key>
+    <string>No</string>
+    <key>aut_ramparts</key>
+    <string>Yes</string>
+    <key>aut_rockwall</key>
+    <string>Yes</string>
+    <key>aut_rough_terrain</key>
+    <string>Yes</string>
+    <key>aut_sallyport</key>
+    <string>No</string>
+    <key>aut_starting_position</key>
+    <string>No selection</string>
+    <key>aut_underLowBar</key>
+    <string>No selection</string>
 	<key>match_num</key>
 	<integer>33</integer>
 	<key>team_color</key>

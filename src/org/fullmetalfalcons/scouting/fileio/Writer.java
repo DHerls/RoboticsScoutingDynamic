@@ -6,6 +6,7 @@ import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.fullmetalfalcons.scouting.elements.Element;
 import org.fullmetalfalcons.scouting.elements.ElementType;
+import org.fullmetalfalcons.scouting.equations.Equation;
 import org.fullmetalfalcons.scouting.main.Main;
 import org.fullmetalfalcons.scouting.teams.Team;
 
@@ -145,6 +146,21 @@ public class Writer {
                     }
                 }
             }
+
+            double grandTotal = 0.0;
+            double v;
+            for (Equation e: Main.getEquations()){
+                c = r.createCell(columnNum);
+                v = e.evaluate(t);
+                c.setCellValue(v);
+                grandTotal+=v;
+                columnNum++;
+            }
+
+            c = r.createCell(columnNum);
+            c.setCellValue(grandTotal);
+            c.setCellStyle(sectionEndStyle);
+
             rowNum++;
         }
     }
@@ -278,10 +294,30 @@ public class Writer {
             }
 
         }
-
         s.addMergedRegion(new CellRangeAddress(0,0,labelStart,headerPosition-1));
         endColumns.add(headerPosition-1);
-        s.setAutoFilter(new CellRangeAddress(1,1,0,headerPosition-1));
+
+        labelStart = headerPosition;
+
+        c = topRow.createCell(headerPosition);
+        c.setCellValue("Totals");
+        c.setCellStyle(headerStyle);
+
+        for(Equation e: Main.getEquations()){
+            c = bottomRow.createCell(headerPosition);
+            c.setCellValue(e.getName());
+            c.setCellStyle(headerStyle);
+            headerPosition++;
+        }
+
+        c = bottomRow.createCell(headerPosition);
+        c.setCellValue("Grand Total");
+        c.setCellStyle(headerStyle);
+
+        s.addMergedRegion(new CellRangeAddress(0,0,labelStart,headerPosition));
+        endColumns.add(headerPosition);
+
+        s.setAutoFilter(new CellRangeAddress(1,1,0,headerPosition));
 
     }
 

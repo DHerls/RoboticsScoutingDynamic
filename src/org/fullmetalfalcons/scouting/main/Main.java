@@ -1,7 +1,11 @@
 package org.fullmetalfalcons.scouting.main;
 
 import com.dd.plist.NSDictionary;
+import expr.Expr;
+import expr.Parser;
+import expr.SyntaxException;
 import org.fullmetalfalcons.scouting.elements.Element;
+import org.fullmetalfalcons.scouting.equations.Equation;
 import org.fullmetalfalcons.scouting.exceptions.ElementParseException;
 import org.fullmetalfalcons.scouting.fileio.Reader;
 import org.fullmetalfalcons.scouting.fileio.Writer;
@@ -22,6 +26,7 @@ public class Main {
 
     private static final ArrayList<Element> ELEMENTS = new ArrayList<>();
     private static final ArrayList<Team> TEAMS = new ArrayList<>();
+    private static final ArrayList<Equation> EQUATIONS = new ArrayList<>();
     //Console spam
     private static final boolean DEBUG = false;
 
@@ -57,12 +62,18 @@ public class Main {
             exitDialogue();
 
             log("Exiting program");
+
+            for(Team t: TEAMS){
+                System.out.println(EQUATIONS.get(0).evaluate(t));
+            }
+
             System.exit(0);
         } catch(Exception e){
             e.printStackTrace();
             sendError("Unknown error occurred: " + e.toString());
             System.exit(-1);
         }
+
 
 
     }
@@ -107,6 +118,13 @@ public class Main {
         TEAMS.add(t);
     }
 
+    public static void addEquation(String line){
+        Equation e = new Equation(line);
+        debug("Equation " + line + " added");
+        EQUATIONS.add(e);
+
+    }
+
     public static ArrayList<Element> getElements(){
         return ELEMENTS;
     }
@@ -138,5 +156,9 @@ public class Main {
 
     public static void log(String message){
         System.out.println(message);
+    }
+
+    public static ArrayList<Equation> getEquations() {
+        return EQUATIONS;
     }
 }
