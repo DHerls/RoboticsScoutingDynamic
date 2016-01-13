@@ -24,7 +24,6 @@ public class Main {
 
     public static void main(String args[]){
         try {
-            log("4557".hashCode()+"");
             log("Program Starting");
             log("Starting to load configuration");
             Reader.loadConfig();
@@ -38,6 +37,7 @@ public class Main {
             log("Exiting program");
             System.exit(0);
         } catch(Exception e){
+            e.printStackTrace();
             sendError("Unknown error occurred: " + e.toString());
             System.exit(-1);
         }

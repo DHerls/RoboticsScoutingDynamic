@@ -64,7 +64,9 @@ public class Reader {
                 Main.debug("Discovered " + rootDict.size() + " key/value pairs");
                 Main.addTeam(rootDict);
             } catch (IOException | PropertyListFormatException | ParserConfigurationException | ParseException | SAXException e) {
-                e.printStackTrace();
+                Main.sendError("An error has occurred with one of the plists: " + f.getName() + "\n" + e.getMessage());
+            } catch (IllegalArgumentException e){
+                Main.sendError("Someone has changed the plists... and they did a bad job");
             }
         }
     }
