@@ -18,7 +18,6 @@ import java.text.ParseException;
 public class Reader {
 
     private static final String CONFIG_FILE_NAME = "config.txt";
-    private static final String PLIST_PATH = "plists/";
 
     /**
      *Loads the config file and assigns the lines to elements
@@ -46,9 +45,10 @@ public class Reader {
 
     /**
      * Loads .plist files from the specified directory and creates Team Objects based off of them
+     * @param arg
      */
-    public static void loadPlists(){
-        File plistDirectory = new File(PLIST_PATH);
+    public static void loadPlists(String arg){
+        File plistDirectory = new File(arg);
         //Only retrieve files that end in ".plist"
         File[] plistFiles = plistDirectory.listFiles(new FilenameFilter() {
             @Override

@@ -8,6 +8,9 @@ import org.fullmetalfalcons.scouting.fileio.Writer;
 import org.fullmetalfalcons.scouting.teams.Team;
 
 import javax.swing.*;
+import java.awt.*;
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 
 /**
@@ -24,16 +27,22 @@ public class Main {
 
     public static void main(String args[]){
         try {
+            if(args.length==0){
+                sendError("You have not provided a location for plists");
+                System.exit(-1);
+            }
+
             log("Program Starting");
             log("Starting to load configuration");
             Reader.loadConfig();
             log(ELEMENTS.size() + " elements loaded");
             log("Starting to load plists");
-            Reader.loadPlists();
+            Reader.loadPlists(args[0]);
             log(TEAMS.size() + " teams loaded");
             log("Starting to write file");
             Writer.write();
             log("Results saved to " + Writer.FILENAME);
+            exitDialogue();
             log("Exiting program");
             System.exit(0);
         } catch(Exception e){
@@ -43,6 +52,18 @@ public class Main {
         }
 
 
+    }
+
+    private static void exitDialogue() throws IOException {
+        int result = JOptionPane.showConfirmDialog(null, "Results have been saved to \"results.xlsx.\" Would you like to open it now?",
+                "Done!", JOptionPane.YES_NO_OPTION);
+        if (result==JOptionPane.YES_OPTION){
+            try {
+                Desktop.getDesktop().open(new File(Writer.FILENAME));
+            }catch (IllegalArgumentException e){
+                sendError("Congratulations! You managed damage/lose the results file in the time since it was made!");
+            }
+        }
     }
 
     public static void addElement(String line){

@@ -15,7 +15,7 @@
 	<key>team_color</key>
 	<string>Red</string>
 	<key>team_num</key>
-	<integer>g</integer>
+	<integer>1337</integer>
 	<key>teleop_chevalDeFrise</key>
 	<string>No</string>
 	<key>teleop_drawbridge</key>
