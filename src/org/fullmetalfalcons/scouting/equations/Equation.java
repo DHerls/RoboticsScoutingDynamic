@@ -15,7 +15,7 @@ import org.fullmetalfalcons.scouting.teams.Team;
 public class Equation {
 
     private String equation;
-    private String name;
+    private final String name;
 
     public Equation(String line){
         String[] splitLine = line.split("=");
@@ -28,6 +28,7 @@ public class Equation {
             switch(e.getType()){
 
                 case SEGMENTED_CONTROL:
+                    //TODO Actually put something here
                     for (String key: e.getKeys()){
                         equation = equation.replace(key.toLowerCase(),"1");
                     }
@@ -38,6 +39,7 @@ public class Equation {
                             //To make sure it's a number, parse double, then parse back to string
                             equation = equation.replace(key,String.valueOf(Double.parseDouble(t.getValue(key))));
                         } catch(NumberFormatException e1){
+                            //TODO Better error handling
                             Main.sendError("Fuck");
                         }
                     }
@@ -48,6 +50,7 @@ public class Equation {
                             //To make sure it's a number, parse int, then parse back to string
                             equation = equation.replace(key,String.valueOf(Integer.parseInt(t.getValue(key))));
                         } catch(NumberFormatException e1){
+                            //TODO Better error handling
                             Main.sendError("Fuck");
                         }
                     }
@@ -67,9 +70,10 @@ public class Equation {
         }
         Double value = 0.0;
         try {
+            //Uses the EPXR library by darius
             Expr expr = Parser.parse(equation);
             value = expr.value();
-        } catch (Exception e) {
+        } catch (SyntaxException e) {
             e.printStackTrace();
         }
         return value;

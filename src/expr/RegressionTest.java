@@ -3,6 +3,7 @@ package expr;
 /**
  * Test for bugs in the whole package.
  */
+@SuppressWarnings("ALL")
 public class RegressionTest {
 
     public static void main(String[] args) {

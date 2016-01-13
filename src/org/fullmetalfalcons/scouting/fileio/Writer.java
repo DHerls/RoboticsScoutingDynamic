@@ -52,17 +52,22 @@ public class Writer {
         //Generate the first two rows of the sheet form the available Elements
         createHeader();
 
+        //Make the columns an appropriate width
+        autoSize();
+
         //Add Team data to the sheet
         addData();
 
-        //Make the columns an appropriate width
-        autoSize();
         Main.debug("Attempting to save workbook");
 
+        //Will only end if successful in saving the file, should only fail if workbook is open in another window
         while (true) {
             try {
+                //Create file if none exists/open existing file
                 FileOutputStream fileOut = new FileOutputStream(FILENAME);
+                //Write out workbook
                 wb.write(fileOut);
+                //Close output stream
                 fileOut.close();
                 Main.debug("Workbook saved");
                 break;
@@ -77,17 +82,25 @@ public class Writer {
 
     private static void addData() {
         Main.debug("Adding data");
+        //Create generic cell to use for things
         Cell c;
+        //Start after the header
         int rowNum = 2;
         Row r;
+        //For all team data in TEAMS
         for (Team t: Main.getTeams()){
             Main.debug("Adding data for team " + t.getValue(Team.NUMBER_KEY));
+            //Create a row
             r = s.createRow(rowNum);
 
+            //These first few sections are for keys which are constants: Team Number, Match Number, Alliance Color
             c = r.createCell(0);
+            //Get value associated with key
             String value = t.getValue(Team.NUMBER_KEY);
             try {
+                //Assume Team Number is an int, catch the error if it isn't
                 c.setCellValue(Integer.parseInt(value));
+                //Shhhhhhhhhhhhh
                 if (value.hashCode()==1601763) {
                     c.setCellStyle(superSecretSpecialStyle);
                 }
@@ -95,9 +108,9 @@ public class Writer {
                 Main.sendError(value + " is not a team number! (You should be proud of getting this error)");
             }
 
+            //See above
             c = r.createCell(1);
             value = t.getValue(Team.MATCH_KEY);
-
             try {
 
                 c.setCellValue(Integer.parseInt(value));
@@ -105,39 +118,44 @@ public class Writer {
                 Main.sendError(value + " is not a match number! (You should be proud of getting this error)");
             }
 
-
-
+            //See above
             c = r.createCell(2);
             value = t.getValue(Team.COLOR_KEY);
             c.setCellValue(value);
+            //Set color of text to be the same as alliance color
             if (value.toLowerCase().equals("red")){
                 c.setCellStyle(redStyle);
             } else {
                 c.setCellStyle(blueStyle);
             }
 
-
+            //Start in the column after the General Info
             int columnNum = 3;
+            //For every element
             for (Element e: Main.getElements()){
+                //Labels don't have values, so ignore them
                 if (e.getType()!= ElementType.LABEL){
+                    //For every key in the element
                     for (String key: e.getKeys()){
+                        //Create a new cell
                         c = r.createCell(columnNum);
+
                         try{
+                            //Assume value is an integer
                             c.setCellValue(Integer.parseInt(t.getValue(key)));
                         } catch (NumberFormatException e1){
                             try {
+                                //If it fails, assume value is a double
                                 c.setCellValue(Double.parseDouble(t.getValue(key)));
                             } catch (NumberFormatException e2){
-                                if (t.getValue(key).length()>(key.length()+10)){
-
-                                }
+                                //Finally, default to String
                                 c.setCellValue(t.getValue(key));
                             }
                         } catch (NullPointerException e1){
                             Main.sendError("Plist is missing key \"" + key + ",\" which is impressive.");
                             c.setCellValue("MISSING VALUE");
                         }
-
+                        //If at the end of a section, add a border on the right
                         if (endColumns.contains(columnNum)){
                             c.setCellStyle(sectionEndStyle);
                         }
@@ -147,18 +165,29 @@ public class Writer {
                 }
             }
 
+            //Section to calculate score totals
+
             double grandTotal = 0.0;
+
+            //Used to temporarily store value
             double v;
+            //For every equation
             for (Equation e: Main.getEquations()){
+                //Create a new cell
                 c = r.createCell(columnNum);
+                //Calculate the score for the current team
                 v = e.evaluate(t);
+                //Set the cell to equal the score
                 c.setCellValue(v);
+                //Add the score to the Grand Total
                 grandTotal+=v;
                 columnNum++;
             }
 
+            //Place value of Grand Total in final cell
             c = r.createCell(columnNum);
             c.setCellValue(grandTotal);
+            //Add a border on the right side
             c.setCellStyle(sectionEndStyle);
 
             rowNum++;
@@ -168,20 +197,10 @@ public class Writer {
     private static void autoSize() {
         Main.debug("Autosizing Columns");
         int width;
-        Row r = s.getRow(1);
-        Cell c;
         for (int i = 0; i<50;i++){
-            c = r.getCell(i);
-            if (c!=null){
-               switch(c.getCellType()){
-                   case Cell.CELL_TYPE_STRING:
-                       s.setColumnWidth(i,c.getStringCellValue().length()*300+1200);
-                       break;
-                   case Cell.CELL_TYPE_NUMERIC:
-                       s.setColumnWidth(i,String.valueOf(c.getNumericCellValue()).length()*100+1100);
-                       break;
-               }
-            }
+           s.autoSizeColumn(i,true);
+            width = s.getColumnWidth(i);
+            s.setColumnWidth(i,width+1200);
         }
 
         s.createFreezePane(0,2);

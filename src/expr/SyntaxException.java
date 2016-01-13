@@ -8,6 +8,7 @@ package expr;
  * produce a short, cryptic error message (with getMessage()) or a
  * long, hopefully helpful one (with explain()).
  */
+@SuppressWarnings("ALL")
 public class SyntaxException extends Exception {
 
     /** An error code meaning the input string couldn't reach the end

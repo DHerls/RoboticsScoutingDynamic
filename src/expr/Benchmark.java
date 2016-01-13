@@ -5,6 +5,7 @@ package expr;
 /**
  * Time evaluating many expressions over many values.
  */
+@SuppressWarnings("ALL")
 public class Benchmark {
     public static void main(String[] args) {
         double parse_product = 1.0;

@@ -98,12 +98,14 @@ public abstract class Expr {
 // plausibly want to do it in a completely different way, such as a
 // stack machine.
 
+@SuppressWarnings("ALL")
 class LiteralExpr extends Expr {
     double v;
     LiteralExpr(double v) { this.v = v; }
     public double value() { return v; }
 }
 
+@SuppressWarnings("ALL")
 class UnaryExpr extends Expr {
     int rator;
     Expr rand;
@@ -135,6 +137,7 @@ class UnaryExpr extends Expr {
     }
 }
 
+@SuppressWarnings("ALL")
 class BinaryExpr extends Expr {
     int rator;
     Expr rand0, rand1;
@@ -169,6 +172,7 @@ class BinaryExpr extends Expr {
     }
 }
 
+@SuppressWarnings("ALL")
 class ConditionalExpr extends Expr {
     Expr test, consequent, alternative;
 

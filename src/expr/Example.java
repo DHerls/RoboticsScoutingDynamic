@@ -28,6 +28,7 @@ package expr;
 /**
  * A simple example of parsing and evaluating an expression.
  */
+@SuppressWarnings("ALL")
 public class Example {
     public static void main(String[] args) {
 

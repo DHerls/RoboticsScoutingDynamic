@@ -5,6 +5,7 @@ package expr;
 import java.util.Vector;
 
 
+@SuppressWarnings("ALL")
 class Scanner {
 
     private String s;
