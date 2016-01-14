@@ -107,7 +107,6 @@ public class Equation {
         for (String s: nameSplit){
             b.append(s.substring(0,1).toUpperCase()).append(s.substring(1).toLowerCase()).append(" ");
         }
-        String end = b.toString();
-        return end;
+        return b.toString();
     }
 }
