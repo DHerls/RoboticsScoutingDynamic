@@ -1,9 +1,6 @@
 package org.fullmetalfalcons.scouting.main;
 
 import com.dd.plist.NSDictionary;
-import expr.Expr;
-import expr.Parser;
-import expr.SyntaxException;
 import org.fullmetalfalcons.scouting.elements.Element;
 import org.fullmetalfalcons.scouting.equations.Equation;
 import org.fullmetalfalcons.scouting.exceptions.ElementParseException;
@@ -62,10 +59,6 @@ public class Main {
             exitDialogue();
 
             log("Exiting program");
-
-            for(Team t: TEAMS){
-                System.out.println(EQUATIONS.get(0).evaluate(t));
-            }
 
             System.exit(0);
         } catch(Exception e){

@@ -217,36 +217,49 @@ public class Writer {
     }
 
     /**
-     * Sets properties for the Styles used in other methods
+     * Sets properties for the CellStyles used in other methods
      */
     private static void generateStyles() {
         Main.debug("Creating styles");
         Main.debug("Creating Header Style");
+
+        //Create new CellStyle
         headerStyle = wb.createCellStyle();
+        //Set borders
         headerStyle.setBorderBottom(CellStyle.BORDER_THIN);
         headerStyle.setBorderTop(CellStyle.BORDER_THIN);
         headerStyle.setBorderLeft(CellStyle.BORDER_THIN);
         headerStyle.setBorderRight(CellStyle.BORDER_THIN);
+        //Align the cell to center
         headerStyle.setAlignment(CellStyle.ALIGN_CENTER);
 
         Main.debug("Creating Category Style");
+        //Create new CellStyle
         categoryStyle = wb.createCellStyle();
+        //Set borders
         categoryStyle.setBorderBottom(CellStyle.BORDER_THIN);
         categoryStyle.setBorderTop(CellStyle.BORDER_THIN);
         categoryStyle.setBorderLeft(CellStyle.BORDER_THIN);
         categoryStyle.setBorderRight(CellStyle.BORDER_THIN);
+        //Align center
         categoryStyle.setAlignment(CellStyle.ALIGN_CENTER);
+        //Set the font to Bold
         Font categoryFont = wb.createFont();
         categoryFont.setBoldweight(Font.BOLDWEIGHT_BOLD);
         categoryStyle.setFont(categoryFont);
 
         Main.debug("Creating Section End Style");
+        //Create new CellStyle
         sectionEndStyle = wb.createCellStyle();
+        //Set right border
         sectionEndStyle.setBorderRight(CellStyle.BORDER_THIN);
 
         Main.debug("Creating Red Style");
+        //Create new CellStyle
         redStyle = wb.createCellStyle();
+        //Set right border
         redStyle.setBorderRight(CellStyle.BORDER_THIN);
+        //Set font color to Red
         Font redFont = wb.createFont();
         redFont.setColor(HSSFColor.RED.index);
         redStyle.setFont(redFont);
@@ -255,10 +268,12 @@ public class Writer {
         blueStyle = wb.createCellStyle();
         blueStyle.setBorderRight(CellStyle.BORDER_THIN);
         Font blueFont = wb.createFont();
+        //Set Font color to blue
         blueFont.setColor(HSSFColor.BLUE.index);
         blueStyle.setFont(blueFont);
 
         Main.debug("Creating Super Secret Style");
+        //OOH Shiny
         superSecretSpecialStyle = wb.createCellStyle();
         Font superSecretSpecialFont = wb.createFont();
         superSecretSpecialFont.setColor(HSSFColor.GOLD.index);
@@ -267,93 +282,128 @@ public class Writer {
         superSecretSpecialStyle.setFont(superSecretSpecialFont);
     }
 
+    /**
+     * Generates the top two rows of the Workbook, contains all titles
+     */
     private static void createHeader() {
         Main.debug("Creating header");
+        //Category Row
         Row topRow = s.createRow(0);
+        //Title row
         Row bottomRow = s.createRow(1);
 
+        //Generic Cell
         Cell c;
 
+        //Add Team Number to first cell
         c=bottomRow.createCell(0);
         c.setCellValue("Team Number");
         c.setCellStyle(headerStyle);
 
+        //Add Match Number to second cell
         c=bottomRow.createCell(1);
         c.setCellValue("Match Number");
         c.setCellStyle(headerStyle);
 
+        //Add Alliance Color to third cell
         c=bottomRow.createCell(2);
         c.setCellValue("Alliance Color");
         c.setCellStyle(headerStyle);
 
+        //Above the first three cells, put "General"
         c=topRow.createCell(0);
         c.setCellValue("General");
         c.setCellStyle(categoryStyle);
 
+        //Merge the region above the first three cells
         s.addMergedRegion(new CellRangeAddress(0,0,0,2));
 
-        int labelStart = 3;
+        //Keep track of where the section (i.e. Human, Teleop, Automomous) begins
+        int sectionStart = 3;
+        //Keep track of where the program is working
         int headerPosition = 3;
 
+        //For every Element
         for (Element e: Main.getElements()){
+            //Really only two options, Label or not label, this Switch Statement is kind of overkill
             switch(e.getType()){
                 case LABEL:
+                    //If one of the arguments is "distinguished" is is placed as a Category Header
                     if (e.getArguments()[0].toLowerCase().trim().equals("distinguished")){
                         c = topRow.createCell(headerPosition);
+                        //Place the label description in the top row
                         c.setCellValue(e.getDescriptions()[0]);
                         c.setCellStyle(categoryStyle);
+                        //After the first category
                         if (headerPosition!=3){
-                            s.addMergedRegion(new CellRangeAddress(0,0,labelStart,headerPosition-1));
+                            //Merge everything since the last category
+                            s.addMergedRegion(new CellRangeAddress(0,0,sectionStart,headerPosition-1));
+                            //List of where the sections end so that borders can be added
                             endColumns.add(headerPosition-1);
                         }
-                        labelStart = headerPosition;
+                        //The section starts at the current position
+                        sectionStart = headerPosition;
                     }
                     break;
                 default:
+                    //For every key
                     for (String key:e.getKeys()){
                         c = bottomRow.createCell(headerPosition);
+
+                        //Capitalize the first letter of every word
                         String[] splitKey = key.split("_");
                         StringBuilder builder = new StringBuilder();
                         for (int i = 1; i<splitKey.length;i++){
                             builder.append(capitalize(splitKey[i])).append(" ");
                         }
+                        //Put the String in the new cell
                         c.setCellValue(builder.toString().trim());
                         c.setCellStyle(headerStyle);
 
+                        //Move to next cell
                         headerPosition++;
                     }
                     break;
             }
 
         }
-        s.addMergedRegion(new CellRangeAddress(0,0,labelStart,headerPosition-1));
+        //Merge the top row since the last category, placed manually here because there are no more labels to trigger it
+        s.addMergedRegion(new CellRangeAddress(0,0,sectionStart,headerPosition-1));
         endColumns.add(headerPosition-1);
 
-        labelStart = headerPosition;
+        //New section
+        sectionStart = headerPosition;
 
+        //Totals
         c = topRow.createCell(headerPosition);
         c.setCellValue("Totals");
         c.setCellStyle(headerStyle);
 
+        //For every Equation
         for(Equation e: Main.getEquations()){
             c = bottomRow.createCell(headerPosition);
+            //Set equation name as column title
             c.setCellValue(e.getName());
             c.setCellStyle(headerStyle);
             headerPosition++;
         }
 
+        //Add "Grand Total" to final column
         c = bottomRow.createCell(headerPosition);
         c.setCellValue("Grand Total");
         c.setCellStyle(headerStyle);
 
-        s.addMergedRegion(new CellRangeAddress(0,0,labelStart,headerPosition));
+        //Merge the "Totals" category header
+        s.addMergedRegion(new CellRangeAddress(0,0,sectionStart,headerPosition));
         endColumns.add(headerPosition);
 
+        //Add filter to bottom row
         s.setAutoFilter(new CellRangeAddress(1,1,0,headerPosition));
 
     }
 
 
+    //Capitalize the first letter of a word
     private static String capitalize(String input){
         return input.substring(0, 1).toUpperCase() + input.substring(1);
     }
