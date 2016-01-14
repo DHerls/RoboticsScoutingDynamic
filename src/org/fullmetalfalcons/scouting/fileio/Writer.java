@@ -80,6 +80,9 @@ public class Writer {
 
     }
 
+    /**
+     * Takes data from the TEAM list and adds its data into the Excel workbook
+     */
     private static void addData() {
         Main.debug("Adding data");
         //Create generic cell to use for things
@@ -194,18 +197,28 @@ public class Writer {
         }
     }
 
+    /**
+     * Sets the columns in the workbook to an appropriate width using the autosize feature
+     *
+     */
     private static void autoSize() {
         Main.debug("Autosizing Columns");
         int width;
         for (int i = 0; i<50;i++){
-           s.autoSizeColumn(i,true);
+            //Autosize every column up to 50
+            s.autoSizeColumn(i,true);
+            //Get the new width of the column
             width = s.getColumnWidth(i);
+            //Add enough to account for the "Filter" icon
             s.setColumnWidth(i,width+1200);
         }
 
         s.createFreezePane(0,2);
     }
 
+    /**
+     * Sets properties for the Styles used in other methods
+     */
     private static void generateStyles() {
         Main.debug("Creating styles");
         Main.debug("Creating Header Style");
