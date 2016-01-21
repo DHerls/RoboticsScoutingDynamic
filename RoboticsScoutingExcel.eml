@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<component inherit-compiler-output="true" inheritJdk="true">
+	<output-test url="file://$MODULE_DIR$/out/test/RoboticsScoutingExcel"/>
+	<exclude-output/>
+	<contentEntry url="file://$MODULE_DIR$"/>
+	<lib name="commons-codec-1.9.jar" scope="COMPILE">
+		<relative-module-cls project-related="jar://$PROJECT_DIR$/lib/poi/lib/commons-codec-1.9.jar!/"/>
+	</lib>
+	<lib name="commons-logging-1.1.3.jar" scope="COMPILE">
+		<relative-module-cls project-related="jar://$PROJECT_DIR$/lib/poi/lib/commons-logging-1.1.3.jar!/"/>
+	</lib>
+	<lib name="junit-4.12.jar" scope="COMPILE">
+		<relative-module-cls project-related="jar://$PROJECT_DIR$/lib/poi/lib/junit-4.12.jar!/"/>
+	</lib>
+	<lib name="log4j-1.2.17.jar" scope="COMPILE">
+		<relative-module-cls project-related="jar://$PROJECT_DIR$/lib/poi/lib/log4j-1.2.17.jar!/"/>
+	</lib>
+	<lib name="xmlbeans-2.6.0.jar" scope="COMPILE">
+		<relative-module-cls project-related="jar://$PROJECT_DIR$/lib/poi/ooxml-lib/xmlbeans-2.6.0.jar!/"/>
+	</lib>
+	<lib name="poi-3.13-20150929.jar" scope="COMPILE">
+		<relative-module-cls project-related="jar://$PROJECT_DIR$/lib/poi/poi-3.13-20150929.jar!/"/>
+	</lib>
+	<lib name="poi-excelant-3.13-20150929.jar" scope="COMPILE">
+		<relative-module-cls project-related="jar://$PROJECT_DIR$/lib/poi/poi-excelant-3.13-20150929.jar!/"/>
+	</lib>
+	<lib name="poi-ooxml-3.13-20150929.jar" scope="COMPILE">
+		<relative-module-cls project-related="jar://$PROJECT_DIR$/lib/poi/poi-ooxml-3.13-20150929.jar!/"/>
+	</lib>
+	<lib name="poi-ooxml-schemas-3.13-20150929.jar" scope="COMPILE">
+		<relative-module-cls project-related="jar://$PROJECT_DIR$/lib/poi/poi-ooxml-schemas-3.13-20150929.jar!/"/>
+	</lib>
+	<lib name="poi-scratchpad-3.13-20150929.jar" scope="COMPILE">
+		<relative-module-cls project-related="jar://$PROJECT_DIR$/lib/poi/poi-scratchpad-3.13-20150929.jar!/"/>
+	</lib>
+	<lib name="dd-plist.jar" scope="COMPILE">
+		<relative-module-cls project-related="jar://$PROJECT_DIR$/lib/dd-plist.jar!/"/>
+	</lib>
+	<lib name="expr.jar" scope="COMPILE">
+		<relative-module-cls project-related="jar://$PROJECT_DIR$/lib/expr.jar!/"/>
+	</lib>
+</component>
