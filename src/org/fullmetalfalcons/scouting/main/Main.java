@@ -37,11 +37,13 @@ public class Main {
     //Console spam
     private static final boolean DEBUG = false;
 
+    //1st location is location of config file
+    //2nd argument is location of plist folder
     public static void main(String args[]){
         try {
             //Program needs to be told where to look for the plist files
-            if(args.length==0){
-                sendError("You have not provided a location for plists");
+            if(args.length<2){
+                sendError("You have not provided a location for plists or config file");
                 System.exit(-1);
             }
 
@@ -49,14 +51,14 @@ public class Main {
             log("Starting to load configuration");
 
             //Populates ELEMENTS ArrayList from configuration file
-            Reader.loadConfig();
+            Reader.loadConfig(args[0]);
 
             log(ELEMENTS.size() + " elements loaded");
 
             log("Starting to load plists");
 
             //Populates TEAMS ArrayList from plist files, passes location of plists
-            Reader.loadPlists(args[0]);
+            Reader.loadPlists(args[1]);
 
             log(TEAMS.size() + " teams loaded");
 

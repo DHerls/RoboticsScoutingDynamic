@@ -17,14 +17,13 @@ import java.text.ParseException;
  */
 public class Reader {
 
-    private static final String CONFIG_FILE_NAME = "config.txt";
-
     /**
      *Loads the config file and assigns the lines to elements
+     * @param fileName
      */
-    public static void loadConfig(){
-        try (BufferedReader reader = new BufferedReader(new FileReader(CONFIG_FILE_NAME))){
-            Main.debug("Config file " + CONFIG_FILE_NAME + " loaded");
+    public static void loadConfig(String fileName){
+        try (BufferedReader reader = new BufferedReader(new FileReader(fileName))){
+            Main.debug("Config file " + fileName + " loaded");
             String line;
             //While there are still lines in the file
             while((line=reader.readLine())!=null){
