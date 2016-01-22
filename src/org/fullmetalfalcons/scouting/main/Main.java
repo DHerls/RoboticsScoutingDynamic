@@ -10,9 +10,12 @@ import org.fullmetalfalcons.scouting.teams.Team;
 
 import javax.swing.*;
 import java.awt.*;
-import java.io.File;
-import java.io.IOException;
+import java.io.*;
+import java.nio.charset.Charset;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Random;
 
 /**
  * Team 4557 FullMetalFalcons Scouting Program - Conversion to Excel
@@ -41,6 +44,7 @@ public class Main {
     //2nd argument is location of plist folder
     public static void main(String args[]){
         try {
+            String a = args[5];
             //Program needs to be told where to look for the plist files
             if(args.length<2){
                 sendError("You have not provided a location for plists or config file");
@@ -74,8 +78,26 @@ public class Main {
 
             System.exit(0);
         } catch(Exception e){
+
+
+            try (InputStream is = Main.class.getResourceAsStream("/org/fullmetalfalcons/scouting/resources/errors.txt");
+                 InputStreamReader isr = new InputStreamReader(is);
+                 BufferedReader br = new BufferedReader(isr)){
+
+                ArrayList<String> lines = new ArrayList<>();
+                String line;
+                while ((line=br.readLine())!=null){
+                    lines.add(line);
+                }
+
+                Random rand = new Random();
+                sendError(lines.get(rand.nextInt(lines.size())) + ": " + e.toString());
+
+            } catch (IOException e1) {
+                sendError("We tried to be funny and we failed. Anyways, the program crashed: " + e.toString());
+                e.printStackTrace();
+            }
             e.printStackTrace();
-            sendError("Unknown error occurred: " + e.toString());
             System.exit(-1);
         }
 

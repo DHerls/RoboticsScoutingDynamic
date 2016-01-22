@@ -1,6 +1,10 @@
 ## Abandon All Hope Ye Who Edit Here
 
+## TEAM 4557 Scouting Program Configuration - AKA The Beast
+
 ## Lines that begin with "##" will not be read by the program, they are considered comments
+
+## To you who are
 
 ##
 ## --------Elements--------
