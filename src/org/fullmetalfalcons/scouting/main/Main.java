@@ -44,7 +44,8 @@ public class Main {
     //2nd argument is location of plist folder
     public static void main(String args[]){
         try {
-            String a = args[5];
+            //Crash Test Dummy \/ \/ \/
+            //String a = args[5];
             //Program needs to be told where to look for the plist files
             if(args.length<2){
                 sendError("You have not provided a location for plists or config file");
@@ -78,12 +79,14 @@ public class Main {
 
             System.exit(0);
         } catch(Exception e){
-
+            //If something goes horribly wrong and the exception isn't caught somewhere else in the code
 
             try (InputStream is = Main.class.getResourceAsStream("/org/fullmetalfalcons/scouting/resources/errors.txt");
                  InputStreamReader isr = new InputStreamReader(is);
                  BufferedReader br = new BufferedReader(isr)){
 
+                //This try/catch statement loads an entire text file into memory just so it can randomly select a funny error message
+                //Yes, my ego is this enormous
                 ArrayList<String> lines = new ArrayList<>();
                 String line;
                 while ((line=br.readLine())!=null){
@@ -94,8 +97,8 @@ public class Main {
                 sendError(lines.get(rand.nextInt(lines.size())) + ": " + e.toString());
 
             } catch (IOException e1) {
+                //If my ego for some strange reason gets too big, this is where we admit defeat
                 sendError("We tried to be funny and we failed. Anyways, the program crashed: " + e.toString());
-                e.printStackTrace();
             }
             e.printStackTrace();
             System.exit(-1);

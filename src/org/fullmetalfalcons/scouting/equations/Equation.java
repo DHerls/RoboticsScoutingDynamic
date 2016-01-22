@@ -138,7 +138,7 @@ public class Equation {
             //Calculate the value of the equation
             value = expr.value();
         } catch (SyntaxException e) {
-            e.printStackTrace();
+            Main.sendError("Equation error in " + name + ": " + e.toString());
         }
         return value;
     }
