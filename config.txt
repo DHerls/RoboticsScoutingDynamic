@@ -1,3 +1,5 @@
+## Abandon All Hope Ye Who Edit Here
+
 ## Lines that begin with "##" will not be read by the program, they are considered comments
 
 ##
