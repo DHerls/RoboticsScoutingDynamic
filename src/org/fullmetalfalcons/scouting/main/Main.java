@@ -44,7 +44,8 @@ public class Main {
     //2nd argument is location of plist folder
     public static void main(String args[]){
         try {
-            String a = args[5];
+            //Crash Test Dummy \/ \/ \/
+            //String a = args[5];
             //Program needs to be told where to look for the plist files
             if(args.length<2){
                 sendError("You have not provided a location for plists or config file");
