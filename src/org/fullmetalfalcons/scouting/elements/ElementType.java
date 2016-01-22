@@ -12,7 +12,8 @@ public enum ElementType {
     TEXTFIELD("textfield"),
     STEPPER("stepper"),
     LABEL("label"),
-    SWITCH("switch");
+    SWITCH("switch"),
+    SLIDER("slider");
 
     private final String key;
 
@@ -28,7 +29,7 @@ public enum ElementType {
      */
     public static ElementType getElement(String input){
         for (ElementType e: values()){
-            if (input.toLowerCase().trim().equals(e.getKey())){
+            if (input.trim().equalsIgnoreCase(e.getKey())){
                 return e;
             }
         }

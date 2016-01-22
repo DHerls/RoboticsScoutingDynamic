@@ -126,7 +126,7 @@ public class Writer {
             value = t.getValue(Team.COLOR_KEY);
             c.setCellValue(value);
             //Set color of text to be the same as alliance color
-            if (value.toLowerCase().equals("red")){
+            if (value.equalsIgnoreCase("red")){
                 c.setCellStyle(redStyle);
             } else {
                 c.setCellStyle(blueStyle);
@@ -329,7 +329,7 @@ public class Writer {
             switch(e.getType()){
                 case LABEL:
                     //If one of the arguments is "distinguished" is is placed as a Category Header
-                    if (e.getArguments()[0].toLowerCase().trim().equals("distinguished")){
+                    if (e.getArguments()[0].trim().equalsIgnoreCase("distinguished")){
                         c = topRow.createCell(headerPosition);
                         //Place the label description in the top row
                         c.setCellValue(e.getDescriptions()[0]);

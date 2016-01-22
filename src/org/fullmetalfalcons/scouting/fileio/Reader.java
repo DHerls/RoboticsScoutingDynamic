@@ -27,6 +27,7 @@ public class Reader {
             String line;
             //While there are still lines in the file
             while((line=reader.readLine())!=null){
+                line = line.trim();
                 if (line.length()<2){
                     continue;
                 }

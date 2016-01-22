@@ -39,31 +39,67 @@ public class Equation {
             switch(e.getType()){
 
                 case SEGMENTED_CONTROL:
-                    //TODO Actually put something here
-                    for (String key: e.getKeys()){
-                        equation = equation.replace(key.toLowerCase(),"1");
-                    }
-                    break;
-                //For a textfield
-                case TEXTFIELD:
-                    for(String key: e.getKeys()){
-                        try{
-                            //To make sure it's a number, parse double, then parse back to string
-                            equation = equation.replace(key,String.valueOf(Double.parseDouble(t.getValue(key))));
-                        } catch(NumberFormatException e1){
+                    String[] args = e.getArguments();
+                    //The program can only parse if the options are "Yes", "No", and "Try/Fail"
+                    if (args[0].equalsIgnoreCase("yes") && args[1].equalsIgnoreCase("no")
+                            && args[2].equalsIgnoreCase("try/fail")){
+                        for (String key: e.getKeys()){
+                            switch(t.getValue(key).toLowerCase()){
+                                case "yes":
+                                    equation = equation.replace(key.toLowerCase(),"1");
+                                    break;
+                                case "no":
+                                    equation = equation.replace(key.toLowerCase(),"0");
+                                    break;
+                                case "try/fail":
+                                    equation = equation.replace(key.toLowerCase(),"0.5");
+                                    break;
+                            }
+                        }
+
+                    } else {
+                        for (String key: e.getKeys()){
                             equation = equation.replace(key,"0");
-                            Main.sendError(key + " does not have a numeric value");
                         }
                     }
                     break;
+
+                //For a textfield
+                case TEXTFIELD:
+                    for (String arg: e.getArguments()){
+                        if (arg.equalsIgnoreCase("number")){
+                            for(String key: e.getKeys()){
+                                try{
+                                    //To make sure it's a number, parse int, then parse back to string
+                                    equation = equation.replace(key,String.valueOf(Integer.parseInt(t.getValue(key))));
+                                } catch(NumberFormatException e1){
+                                    equation = equation.replace(key,"0");
+                                    Main.sendError("Textfield: " + key + " does not have a numeric value. You should not be seeing this error.");
+                                }
+                            }
+                        } else if (arg.equalsIgnoreCase("decimal")){
+                            for(String key: e.getKeys()){
+                                try{
+                                    //To make sure it's a number, parse int, then parse back to string
+                                    equation = equation.replace(key,String.valueOf(Double.parseDouble(t.getValue(key))));
+                                } catch(NumberFormatException e1){
+                                    equation = equation.replace(key,"0");
+                                    Main.sendError("Textfield: " + key + " does not have a numeric value. You should not be seeing this error.");
+                                }
+                            }
+                        }
+                    }
+
+                    break;
                 case STEPPER:
+
                     for(String key: e.getKeys()){
                         try{
                             //To make sure it's a number, parse int, then parse back to string
                             equation = equation.replace(key,String.valueOf(Integer.parseInt(t.getValue(key))));
                         } catch(NumberFormatException e1){
                             equation = equation.replace(key,"0");
-                            Main.sendError(key + " does not have a numeric value");
+                            Main.sendError(key + " does not have a numeric value. You should not be seeing this error.");
                         }
                     }
                     break;
@@ -73,10 +109,23 @@ public class Equation {
                 //Yesses are 1, Nos are 0
                 case SWITCH:
                     for(String key: e.getKeys()){
-                        if (t.getValue(key).toLowerCase().trim().equals("yes")){
+                        if (t.getValue(key).equalsIgnoreCase("yes")){
                             equation = equation.replace(key,"1");
+                        } else if (t.getValue(key).equalsIgnoreCase("no")){
+                            equation = equation.replace(key,"0");
                         } else {
                             equation = equation.replace(key,"0");
+                            Main.sendError("Switch: " + key + " returned a value that was not Yes or No. You should not be seeing this error.");
+                        }
+                    }
+                    break;
+                case SLIDER:
+                    for(String key: e.getKeys()){
+                        try {
+                            equation = equation.replace(key, String.valueOf(Double.parseDouble(t.getValue(key))));
+                        } catch (NumberFormatException e1){
+                            equation = equation.replace(key,"0");
+                            Main.sendError("Slider: " + key + " returned a non-numeric value.  You should not be seeing this error.");
                         }
                     }
                     break;

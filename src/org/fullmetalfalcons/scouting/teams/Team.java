@@ -29,6 +29,6 @@ public class Team {
      * @throws NullPointerException
      */
     public String getValue(String key) throws NullPointerException{
-        return dictionary.get(key).toJavaObject().toString();
+        return dictionary.get(key).toJavaObject().toString().trim();
     }
 }

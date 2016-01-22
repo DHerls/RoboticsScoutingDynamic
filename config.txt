@@ -1,6 +1,18 @@
+## Lines that begin with "##" will not be read by the program, they are considered comments
+
 ## The program is broken up in parts for each by two semicolons (;;) for the sake of readability. The program will not work for only one semicolon. Two are required.
+## Thou must have two semicolons. Two shall be the number of the semicolons and the number of the semicolons shall be two.
+## Three semicolons shalt thou not have, neither shalt thou have one semicolon, excepting that thou then proceedeth to two. Four is right out.
 ##
-## For elements {SEGMENTED_CONTROL, TEXTFIELD, STEPPER, LABEL}
+## --------Elements--------
+## Elements are used to build the user interface in the phone app
+## Elements consist of 4 parts:
+##  1. A "Type" - Tells the phone how it should display the element and what type of data(number,text) can be stored
+##  2. "Arguments" - Gives additional information about how the phone should display the Element
+##  3. A "Description" - A short message for the phone to display before the Element, describes what the Element does
+##  4. A "Key" - A UNIQUE identifier used by the phone to tell the elements apart. THESE MUST BE UNIQUE
+
+##  The possible Types along with their arguments are shown below
 ## 		SEGMENTED_CONTROL args=[<Selection 1, Selection 2,Selection n>]
 ##			Format= SEGMENTED_CONTROL<args>;;[Title];;[Key]
 ##			For example, for a segmented control with options "Yes No Try/Fail" titled "Scored Goals" would look like
@@ -13,7 +25,7 @@
 ##			Format= STEPPER<args>;;[Title];;[Key]
 ##			For example a stepper that operated between bounds 0 and 5 inclusive titled "Boxes stacked" would look like
 ##			STEPPER <0,5>;;Boxed stacked;;teleop_boxes_stacked
-##		LABEL args=[<type, justification>] where type is any of the following... {bold, normal, distinguished} and justification is {left, center, right}
+##		LABEL args=[<style, justification>] where style is any of the following... {bold, normal, distinguished} and justification is {left, center, right}
 ##			Format= LABEL;;[Label Title]
 ##			For example a label titled "Autonomous" that is clear by drawing lines around it would look like the following
 ##			LABEL <distinguished>;;"Autonomous"
@@ -22,15 +34,10 @@
 ##			For example a series of switchs with titles "Passes one", and "Passes two" would look like
 ##			SWITCH;;Passes one, Passes two;;aut_passes1, aut_passes2
 ##			There are a maximum of 6 switches in a single line.
-##
-## Equations are used to determine an overall score for different parts, such as an overall score for TELEOP, or an overall score for AUTONOMOUS
-##		Add equations to the bottom of the document. To create an Equation, the arguments are
-##			@EQUATION [name]=[equation]
-##		The 'equation' portion of the arguments must be a mathematical equation referring to "keys" created in previous elements. 
-##		The keys must refer back to numerical values, so if the key is a String (such as team color), it will not work in an equation.
-##		Viable operators are the four basic operators (+, –, /, *), and parenthesis for grouping math.
-##		For example, an equation for teleop finding an arbitrary score could look like...
-##			@EQUATION TELEOP=(teleop_boxes_scored+teleop_goals_score+(teleop_shots_attempted / 4)) / 3
+##		SLIDER args=[<lower bound, upper bound>]
+##			Formate= SLIDER <args>;;Title;;key
+##			For example a slider titled "Shot accuracy" would look like...
+##			SLIDER <0,10>;;Shot Accuracy;;teleop_shot_accuracy
 
 LABEL <distinguished, center>;;Autonomous
 SEGMENTED_CONTROL <Yes,No,Try/Fail>;;Reaches defenses?;;aut_reaches_defenses
@@ -47,6 +54,26 @@ LABEL <normal, center>;;Can overcome defense (check all that apply)
 SWITCH;;Portcullis,Cheval Frise,Moat,Ramparts;;teleop_portcullis,teleop_chevalDeFrise,teleop_moat,teleop_ramparts
 SWITCH;;Drawbridge,Sally Port,Rock wall,Rough Terrain;;teleop_drawbridge,teleop_sallyport,teleop_rockwall,teleop_rough_terrain
 SEGMENTED_CONTROL <Yes,No,Try/Fail>;;Can pass under low bar;;teleop_underLowBar
+SLIDER <0,10>;;Shot Accuracy;;teleop_shot_accuracy
+
+## --------EQUATIONS--------
+
+##  Equations are used to determine an overall score for different parts, such as an overall score for TELEOP, or an overall score for AUTONOMOUS
+##		Add equations to the bottom of the document. To create an Equation, the arguments are
+##			@EQUATION [name]=[equation]
+##		The ['equation'] portion of the arguments must be a mathematical equation referring to "keys" created in previous elements.
+##		The keys must refer back to numerical values, so if the key is a String (such as team color), it will not work in an equation. This has the exception of Switches, where Yes is 1 and No is 0.
+##		Viable operators are the four basic operators (+, –, /, *), and parenthesis for grouping math. Exponents are not included, if you wish to use a power, key^n, do key * key * key, etc. n times
+##		For example, an equation for teleop finding an arbitrary score could look like...
+##			@EQUATION TELEOP=(teleop_boxes_scored+teleop_goals_score+(teleop_shots_attempted / 4)) / 3
+##
+##      IMPORTANT: ONLY THE FOLLOWING ELEMENTS MAY BE USED IN EQUATIONS
+##          - SEGMENTED_CONTROL - ONLY with arguments of <Yes,No,Try/Fail> Yes=1, No=0, Try/Fail=.5
+##          - TEXTFIELD - ONLY with arguments of <decimal> or <number>
+##          - STEPPER - Go crazy
+##          - SWITCH - Yes=1, No=0
+##          - SLIDER - See: STEPPER
+##      If an Element besides the ones listed above are used, the program will replace its value with 0.
 
 @EQUATION AUTONOMOUS=(2*aut_reaches_defenses+2*aut_crosses_defenses+aut_portcullis+aut_sallyport) / 4
 @EQUATION TELEOP=(teleop_portcullis+teleop_chevalDeFrise+teleop_moat+teleop_ramparts+teleop_drawbridge+teleop_sallyport+teleop_rockwall+teleop_rough_terrain) / 8
