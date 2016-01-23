@@ -5,7 +5,7 @@ package org.fullmetalfalcons.scouting.exceptions;
  *
  * Created by Dan on 1/11/2016.
  */
-@SuppressWarnings("unused")
+@SuppressWarnings({"serial"})
 public class ElementParseException extends Exception {
 
     public ElementParseException(String message){

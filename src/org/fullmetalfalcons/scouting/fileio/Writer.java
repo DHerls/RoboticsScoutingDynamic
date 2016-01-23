@@ -64,7 +64,10 @@ public class Writer {
         while (true) {
             try {
                 //Create file if none exists/open existing file
-                FileOutputStream fileOut = new FileOutputStream(FILENAME);
+            	int i = Main.plistsDir.lastIndexOf('/');
+            	String newDir = Main.plistsDir.substring(0, i);
+            	Main.log("Saving workbook at location: " + newDir);
+                FileOutputStream fileOut = new FileOutputStream(newDir + "/" + FILENAME);
                 //Write out workbook
                 wb.write(fileOut);
                 //Close output stream

@@ -1,6 +1,16 @@
 package org.fullmetalfalcons.scouting.main;
 
-import com.dd.plist.NSDictionary;
+import java.awt.Desktop;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.util.ArrayList;
+import java.util.Random;
+
+import javax.swing.JOptionPane;
+
 import org.fullmetalfalcons.scouting.elements.Element;
 import org.fullmetalfalcons.scouting.equations.Equation;
 import org.fullmetalfalcons.scouting.exceptions.ElementParseException;
@@ -8,14 +18,7 @@ import org.fullmetalfalcons.scouting.fileio.Reader;
 import org.fullmetalfalcons.scouting.fileio.Writer;
 import org.fullmetalfalcons.scouting.teams.Team;
 
-import javax.swing.*;
-import java.awt.*;
-import java.io.*;
-import java.nio.charset.Charset;
-import java.nio.file.Files;
-import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.Random;
+import com.dd.plist.NSDictionary;
 
 /**
  * Team 4557 FullMetalFalcons Scouting Program - Conversion to Excel
@@ -40,6 +43,8 @@ public class Main {
     //Console spam
     private static final boolean DEBUG = false;
 
+    public static String plistsDir;
+    
     //1st location is location of config file
     //2nd argument is location of plist folder
     public static void main(String args[]){
@@ -63,7 +68,8 @@ public class Main {
             log("Starting to load plists");
 
             //Populates TEAMS ArrayList from plist files, passes location of plists
-            Reader.loadPlists(args[1]);
+            plistsDir = args[1];
+            Reader.loadPlists(plistsDir);
 
             log(TEAMS.size() + " teams loaded");
 
