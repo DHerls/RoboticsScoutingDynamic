@@ -10,6 +10,7 @@ import org.fullmetalfalcons.scouting.equations.Equation;
 import org.fullmetalfalcons.scouting.main.Main;
 import org.fullmetalfalcons.scouting.teams.Team;
 
+import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -33,18 +34,19 @@ public class Writer {
 
     private static final ArrayList<Integer> endColumns = new ArrayList<>();
 
-    public static final String FILENAME = "results.xlsx";
+    private static File resultsFile;
 
     /**
      * Only public method, compiles data and writes it out to an excel workbook
+     * @param location Location of Results.xlsx
      */
-    public static void write(){
+    public static void write(String location){
         Main.debug("Creating workbook");
         //Create a new workbook
         wb = new XSSFWorkbook();
         Main.debug("Creating sheet");
         //Create a new sheet in the workbook with the name "Results"
-        s = wb.createSheet("Results");
+        Writer.s = wb.createSheet("Results");
 
         //Create CellStyles for use later
         generateStyles();
@@ -64,10 +66,13 @@ public class Writer {
         while (true) {
             try {
                 //Create file if none exists/open existing file
-            	int i = Main.plistsDir.lastIndexOf('/');
-            	String newDir = Main.plistsDir.substring(0, i);
-            	Main.log("Saving workbook at location: " + newDir);
-                FileOutputStream fileOut = new FileOutputStream(newDir + "/" + FILENAME);
+                //If location doesn't end in "/", add one
+                resultsFile = new File((location.isEmpty()? location: location.charAt(location.length()-1)=='/'?location:location+"/") + "results.xlsx");
+                if (resultsFile.getParentFile() != null) {
+                    resultsFile.getParentFile().mkdirs();
+                }
+                resultsFile.createNewFile();
+                FileOutputStream fileOut = new FileOutputStream(resultsFile);
                 //Write out workbook
                 wb.write(fileOut);
                 //Close output stream
@@ -75,10 +80,14 @@ public class Writer {
                 Main.debug("Workbook saved");
                 break;
             } catch (IOException e) {
-                Main.sendError("Close the Excel workbook! Press OK when done.");
+                if (e.getMessage().contains("The process cannot access the file because it is being used by another process")){
+                    Main.sendError("Close the Excel workbook! Press OK when done.");
+                } else {
+                    Main.sendError("Error in arguments passed for results.xlsx location");
+                }
             }
         }
-        Main.log("Results saved to " + Writer.FILENAME);
+        Main.log("Results saved to " + resultsFile.getAbsolutePath());
 
 
     }
@@ -409,5 +418,9 @@ public class Writer {
     //Capitalize the first letter of a word
     private static String capitalize(String input){
         return input.substring(0, 1).toUpperCase() + input.substring(1);
+    }
+
+    public static File getResultsFile() {
+        return resultsFile;
     }
 }

@@ -76,7 +76,7 @@ public class Main {
             log("Starting to write file");
 
             //Writes data to Excel spreadsheet
-            Writer.write();
+            Writer.write(args.length<3 ? "" :args[2]);
 
             //Asks user if they would like to open the Excel workbook
             exitDialogue();
@@ -115,11 +115,11 @@ public class Main {
     }
 
     private static void exitDialogue() throws IOException {
-        int result = JOptionPane.showConfirmDialog(null, "Results have been saved to \"results.xlsx.\" Would you like to open the workbook now?",
+        int result = JOptionPane.showConfirmDialog(null, "Results have been saved to \""+ Writer.getResultsFile().getAbsolutePath()+ "\" Would you like to open the workbook now?",
                 "Done!", JOptionPane.YES_NO_OPTION);
         if (result==JOptionPane.YES_OPTION){
             try {
-                Desktop.getDesktop().open(new File(Writer.FILENAME));
+                Desktop.getDesktop().open(Writer.getResultsFile());
             }catch (IllegalArgumentException e){
                 sendError("Congratulations! You managed damage/lose the results file in the time since it was made!");
             }
@@ -176,12 +176,17 @@ public class Main {
      */
     public static void sendError(String message){
         try {
-            JOptionPane.showMessageDialog(null, message,
-                    "You done messed up", JOptionPane.ERROR_MESSAGE);
+            int i = JOptionPane.showConfirmDialog(null, message,
+                    "You done messed up", JOptionPane.OK_CANCEL_OPTION,JOptionPane.ERROR_MESSAGE);
+            if (i==JOptionPane.CANCEL_OPTION||i==JOptionPane.CLOSED_OPTION){
+                System.exit(-1);
+            }
         } catch (Exception e){
             JOptionPane.showMessageDialog(null, "An error occurred while displaying an error",
                     "Yo Dawg!", JOptionPane.ERROR_MESSAGE);
+
         }
+
     }
 
     public static void debug(String message){
