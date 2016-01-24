@@ -37,8 +37,8 @@ public class Writer {
     private static File resultsFile;
 
     /**
-     * Only public method, compiles data and writes it out to an excel workbook
-     * @param location Location of Results.xlsx
+     * Compiles team and equation data and writes it out to an excel workbook
+     * @param location Location of results.xlsx
      */
     public static void write(String location){
         Main.debug("Creating workbook");
@@ -69,8 +69,10 @@ public class Writer {
                 //If location doesn't end in "/", add one
                 resultsFile = new File((location.isEmpty()? location: location.charAt(location.length()-1)=='/'?location:location+"/") + "results.xlsx");
                 if (resultsFile.getParentFile() != null) {
+                    //noinspection ResultOfMethodCallIgnored
                     resultsFile.getParentFile().mkdirs();
                 }
+                //noinspection ResultOfMethodCallIgnored
                 resultsFile.createNewFile();
                 FileOutputStream fileOut = new FileOutputStream(resultsFile);
                 //Write out workbook
@@ -415,11 +417,18 @@ public class Writer {
     }
 
 
-    //Capitalize the first letter of a word
+    /**
+     * Capitalize the first letter of a word
+     */
     private static String capitalize(String input){
         return input.substring(0, 1).toUpperCase() + input.substring(1);
     }
 
+    /**
+     * Simple getter for results.xlsx
+     *
+     * @return File object for results.xlsx
+     */
     public static File getResultsFile() {
         return resultsFile;
     }

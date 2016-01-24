@@ -17,6 +17,11 @@ public enum ElementType {
 
     private final String key;
 
+    /**
+     * Private constructor for ElementType
+     *
+     * @param key Required so strings can be matched to ElementTypes
+     */
     ElementType(String key){
         this.key = key;
     }
@@ -36,6 +41,11 @@ public enum ElementType {
         return null;
     }
 
+    /**
+     * Simple getter - only used in ElementType class
+     *
+     * @return key of the current ElementType
+     */
     private String getKey(){
         return key;
     }
