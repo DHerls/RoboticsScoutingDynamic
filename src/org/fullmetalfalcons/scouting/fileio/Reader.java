@@ -42,8 +42,7 @@ public class Reader {
             }
 
         } catch (IOException e) {
-            Main.sendError("Something is very wrong with the config file. It's probably missing. Try and find it.");
-            System.exit(-1);
+            Main.sendError("Something is very wrong with the config file. It's probably missing. Try and find it.",true);
         }
 
 
@@ -51,10 +50,13 @@ public class Reader {
 
     /**
      * Loads .plist files from the specified directory and creates Team Objects based off of them
-     * @param arg The location of the directory which contains plists
+     * @param plistPath The location of the directory which contains plists
      */
-    public static void loadPlists(String arg){
-        File plistDirectory = new File(arg);
+    public static void loadPlists(String plistPath){
+        File plistDirectory = new File((plistPath.isEmpty()? plistPath: plistPath.charAt(plistPath.length()-1)=='/'?plistPath:plistPath+"/"));
+        if (!plistDirectory.exists()||!plistDirectory.isDirectory()){
+            Main.sendError("Team data location does not exist: " + plistPath,true);
+        }
         //Only retrieve files that end in ".plist"
         File[] plistFiles = plistDirectory.listFiles(new FilenameFilter() {
             @Override
@@ -63,6 +65,10 @@ public class Reader {
             }
         });
         Main.debug(plistFiles.length + " plists discovered");
+        //if (plistFiles.length==0){
+            //Main.sendError("0 Teams discovered in location specified",true);
+        //}
+
         for (File f: plistFiles){
             Main.debug("Loading plist " + f.getName());
             try {
@@ -73,9 +79,9 @@ public class Reader {
                 //If it successfully creates an NSDictionary, it passes it to a Team object
                 Main.addTeam(rootDict);
             } catch (IOException | PropertyListFormatException | ParserConfigurationException | ParseException | SAXException e) {
-                Main.sendError("An error has occurred with one of the plists: " + f.getName() + "\n" + e.getLocalizedMessage());
+                Main.sendError("An error has occurred with one of the plists: " + f.getName() + "\n" + e.getLocalizedMessage(),false);
             } catch (IllegalArgumentException | IndexOutOfBoundsException e){
-                Main.sendError("Someone has changed the plists... and they did a bad job");
+                Main.sendError("Someone has edited the plists... and they did a bad job",false);
             }
         }
     }

@@ -74,7 +74,7 @@ public class Equation {
                                     equation = equation.replace(key,String.valueOf(Integer.parseInt(t.getValue(key))));
                                 } catch(NumberFormatException e1){
                                     equation = equation.replace(key,"0");
-                                    Main.sendError("Textfield: " + key + " does not have a numeric value. You should not be seeing this error.");
+                                    Main.sendError("Textfield: " + key + " does not have a numeric value. You should not be seeing this error.",false);
                                 }
                             }
                         } else if (arg.equalsIgnoreCase("decimal")){
@@ -84,7 +84,7 @@ public class Equation {
                                     equation = equation.replace(key,String.valueOf(Double.parseDouble(t.getValue(key))));
                                 } catch(NumberFormatException e1){
                                     equation = equation.replace(key,"0");
-                                    Main.sendError("Textfield: " + key + " does not have a numeric value. You should not be seeing this error.");
+                                    Main.sendError("Textfield: " + key + " does not have a numeric value. You should not be seeing this error.",false);
                                 }
                             }
                         }
@@ -99,12 +99,15 @@ public class Equation {
                             equation = equation.replace(key,String.valueOf(Integer.parseInt(t.getValue(key))));
                         } catch(NumberFormatException e1){
                             equation = equation.replace(key,"0");
-                            Main.sendError(key + " does not have a numeric value. You should not be seeing this error.");
+                            Main.sendError(key + " does not have a numeric value. You should not be seeing this error.",false);
                         }
                     }
                     break;
-                //Ignore labels
+                //In case anyone is stupid enough to add labels to the equation, replace with 0
                 case LABEL:
+                    for(String key: e.getKeys()){
+                        equation = equation.replace(key,"0");
+                    }
                     break;
                 //Yesses are 1, Nos are 0
                 case SWITCH:
@@ -115,7 +118,7 @@ public class Equation {
                             equation = equation.replace(key,"0");
                         } else {
                             equation = equation.replace(key,"0");
-                            Main.sendError("Switch: " + key + " returned a value that was not Yes or No. You should not be seeing this error.");
+                            Main.sendError("Switch: " + key + " returned a value that was not Yes or No. You should not be seeing this error.",false);
                         }
                     }
                     break;
@@ -125,7 +128,7 @@ public class Equation {
                             equation = equation.replace(key, String.valueOf(Double.parseDouble(t.getValue(key))));
                         } catch (NumberFormatException e1){
                             equation = equation.replace(key,"0");
-                            Main.sendError("Slider: " + key + " returned a non-numeric value.  You should not be seeing this error.");
+                            Main.sendError("Slider: " + key + " returned a non-numeric value.  You should not be seeing this error.",false);
                         }
                     }
                     break;
@@ -138,7 +141,7 @@ public class Equation {
             //Calculate the value of the equation
             value = expr.value();
         } catch (SyntaxException e) {
-            Main.sendError("Equation error in " + name + ": " + e.toString());
+            Main.sendError("Equation error in " + name + ": " + e.toString(),false);
         }
         return value;
     }

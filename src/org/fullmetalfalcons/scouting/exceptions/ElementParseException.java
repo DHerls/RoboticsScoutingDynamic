@@ -12,10 +12,12 @@ public class ElementParseException extends Exception {
         super(message);
     }
 
+    @SuppressWarnings("unused")
     public ElementParseException(Throwable cause){
         super(cause);
     }
 
+    @SuppressWarnings("unused")
     public ElementParseException(String message, Throwable cause){
         super(message,cause);
     }

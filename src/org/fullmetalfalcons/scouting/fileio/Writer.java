@@ -81,9 +81,9 @@ public class Writer {
                 break;
             } catch (IOException e) {
                 if (e.getMessage().contains("The process cannot access the file because it is being used by another process")){
-                    Main.sendError("Close the Excel workbook! Press OK when done.");
+                    Main.sendError("Close the Excel workbook! Press OK when done.",false);
                 } else {
-                    Main.sendError("Error in arguments passed for results.xlsx location");
+                    Main.sendError("Error in arguments passed for results.xlsx location",true);
                 }
             }
         }
@@ -120,7 +120,7 @@ public class Writer {
                     c.setCellStyle(superSecretSpecialStyle);
                 }
             } catch (NumberFormatException e1){
-                Main.sendError(value + " is not a team number! (You should be proud of getting this error)");
+                Main.sendError(value + " is not a team number! (You should be proud of getting this error)",false);
             }
 
             //See above
@@ -130,7 +130,7 @@ public class Writer {
 
                 c.setCellValue(Integer.parseInt(value));
             } catch (NumberFormatException e1){
-                Main.sendError(value + " is not a match number! (You should be proud of getting this error)");
+                Main.sendError(value + " is not a match number! (You should be proud of getting this error)",false);
             }
 
             //See above
@@ -167,7 +167,7 @@ public class Writer {
                                 c.setCellValue(t.getValue(key));
                             }
                         } catch (NullPointerException e1){
-                            Main.sendError("Plist is missing key \"" + key + ",\" which is impressive.");
+                            Main.sendError("Plist is missing key \"" + key + ",\" which is impressive.",false);
                             c.setCellValue("MISSING VALUE");
                         }
                         //If at the end of a section, add a border on the right

@@ -2,7 +2,6 @@ package org.fullmetalfalcons.scouting.main;
 
 import java.awt.Desktop;
 import java.io.BufferedReader;
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -43,8 +42,6 @@ public class Main {
     //Console spam
     private static final boolean DEBUG = false;
 
-    public static String plistsDir;
-    
     //1st location is location of config file
     //2nd argument is location of plist folder
     public static void main(String args[]){
@@ -53,8 +50,7 @@ public class Main {
             //String a = args[5];
             //Program needs to be told where to look for the plist files
             if(args.length<2){
-                sendError("You have not provided a location for plists or config file");
-                System.exit(-1);
+                sendError("You have not provided a location for plists or config file",true);
             }
 
             log("Program Starting");
@@ -68,8 +64,7 @@ public class Main {
             log("Starting to load plists");
 
             //Populates TEAMS ArrayList from plist files, passes location of plists
-            plistsDir = args[1];
-            Reader.loadPlists(plistsDir);
+            Reader.loadPlists(args[1]);
 
             log(TEAMS.size() + " teams loaded");
 
@@ -100,14 +95,14 @@ public class Main {
                 }
 
                 Random rand = new Random();
-                sendError(lines.get(rand.nextInt(lines.size())) + ": " + e.toString());
+                sendError(lines.get(rand.nextInt(lines.size())) + ": " + e.toString(),true);
 
             } catch (IOException e1) {
                 //If my ego for some strange reason gets too big, this is where we admit defeat
-                sendError("We tried to be funny and we failed. Anyways, the program crashed: " + e.toString());
+                e.printStackTrace();
+                sendError("We tried to be funny and we failed. Anyways, the program crashed: " + e.toString(),true);
             }
-            e.printStackTrace();
-            System.exit(-1);
+
         }
 
 
@@ -121,7 +116,7 @@ public class Main {
             try {
                 Desktop.getDesktop().open(Writer.getResultsFile());
             }catch (IllegalArgumentException e){
-                sendError("Congratulations! You managed damage/lose the results file in the time since it was made!");
+                sendError("Congratulations! You managed damage/lose the results file in the time since it was made!",true);
             }
         }
     }
@@ -139,7 +134,7 @@ public class Main {
             debug("Element of type " + e.getType().toString() + " created");
             ELEMENTS.add(e);
         } catch (ElementParseException e) {
-            sendError("Config error: " + e.getMessage());
+            sendError("Config error: " + e.getMessage(),false);
         }
     }
 
@@ -173,13 +168,17 @@ public class Main {
      * Sends an error message to the user with a JOptionPane
      *
      * @param message error message to send
+     * @param isCatastrophicError program will close after acknowledging message
      */
-    public static void sendError(String message){
+    public static void sendError(String message, boolean isCatastrophicError){
+        Main.log("[ERROR]:"+message);
         try {
             int i = JOptionPane.showConfirmDialog(null, message,
-                    "You done messed up", JOptionPane.OK_CANCEL_OPTION,JOptionPane.ERROR_MESSAGE);
-            if (i==JOptionPane.CANCEL_OPTION||i==JOptionPane.CLOSED_OPTION){
+                    "You done messed up", JOptionPane.DEFAULT_OPTION,JOptionPane.ERROR_MESSAGE);
+            if(isCatastrophicError){
                 System.exit(-1);
+            } else if (i==JOptionPane.CLOSED_OPTION){
+                System.exit(1);
             }
         } catch (Exception e){
             JOptionPane.showMessageDialog(null, "An error occurred while displaying an error",
