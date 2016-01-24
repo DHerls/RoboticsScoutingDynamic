@@ -4,24 +4,36 @@ import expr.Expr;
 import expr.Parser;
 import expr.SyntaxException;
 import org.fullmetalfalcons.scouting.elements.Element;
+import org.fullmetalfalcons.scouting.exceptions.EquationParseException;
 import org.fullmetalfalcons.scouting.main.Main;
 import org.fullmetalfalcons.scouting.teams.Team;
 
 /**
- * Holds and does math with equations
+ * Used to evaluate equations as written in the config file
+ * Replaces keys with their associated value
  *
  * Created by Dan on 1/13/2016.
  */
 public class Equation {
 
     private String equation;
-    private final String name;
+    private String name;
 
 
-    public Equation(String line){
-        String[] splitLine = line.split("=");
-        name = splitLine[0].trim();
-        equation = splitLine[1].trim();
+    /**
+     * Constructor for Equation class
+     *
+     * @param line line from config file that contains equation data
+     */
+    public Equation(String line) throws EquationParseException {
+        try{
+            //Line should come in the form EQUATION_NAME=Equation
+            String[] splitLine = line.split("=");
+            name = splitLine[0].trim();
+            equation = splitLine[1].trim();
+        } catch(ArrayIndexOutOfBoundsException e){
+            throw new EquationParseException("Config error, equation missing \"=\"");
+        }
     }
 
     /**
@@ -46,13 +58,13 @@ public class Equation {
                         for (String key: e.getKeys()){
                             switch(t.getValue(key).toLowerCase()){
                                 case "yes":
-                                    equation = equation.replace(key.toLowerCase(),"1");
+                                    equation = equation.replace(key,"1");
                                     break;
                                 case "no":
-                                    equation = equation.replace(key.toLowerCase(),"0");
+                                    equation = equation.replace(key,"0");
                                     break;
                                 case "try/fail":
-                                    equation = equation.replace(key.toLowerCase(),"0.5");
+                                    equation = equation.replace(key,"0.5");
                                     break;
                             }
                         }
@@ -67,6 +79,7 @@ public class Equation {
                 //For a textfield
                 case TEXTFIELD:
                     for (String arg: e.getArguments()){
+                        //Can only parse if arguments are "number" or "decimal"
                         if (arg.equalsIgnoreCase("number")){
                             for(String key: e.getKeys()){
                                 try{
@@ -144,12 +157,12 @@ public class Equation {
     }
 
     /**
-     * Takes the name of the equation, puts them all to lowercase, then capitalizes each word
+     * Takes the name of the equation, puts all words to lowercase, then capitalizes each word
      *
      * @return Properly formatted name of equation
      */
     public String getName() {
-        //Break string appart
+        //Break string apart
         String[] nameSplit = name.split(" ");
         StringBuilder b = new StringBuilder();
         //Put them all to lowercase

@@ -9,6 +9,8 @@ import java.util.regex.Pattern;
  * This class holds information on each individual element including its type, descriptions, arguments, and keys
  * Holds data from the config file
  *
+ * For more information about why data is parsed in a certain way, see the config file.
+ *
  * Created by Dan on 1/11/2016.
  */
 public class Element {
@@ -48,6 +50,7 @@ public class Element {
         Matcher argumentMatcher = argumentPattern.matcher(splitLine[0]);
         //Checks to see if there is any information <like this> in the first portion of the line
         if (argumentMatcher.find()){
+            //Group 0 includes <>, Group 1 just has the information inside <>
             arguments = argumentMatcher.group(1).split(",");
         }
 
@@ -76,6 +79,7 @@ public class Element {
             }
             this.keys = keyList;
 
+            //If LABEL
         } else {
             descriptions = new String[1];
             descriptions[0] = splitLine[1].trim();
@@ -85,18 +89,37 @@ public class Element {
 
     }
 
+    /**
+     *Simple getter
+     *
+     * @return Type of Element
+     */
     public ElementType getType() {
         return type;
     }
 
+    /**
+     *
+     * @return Array containing arguments
+     */
     public String[] getArguments(){
         return arguments;
     }
 
+    /**
+     * Simple getter
+     *
+     * @return Array containing descriptions
+     */
     public String[] getDescriptions() {
         return descriptions;
     }
 
+    /**
+     * Simple getter
+     *
+     * @return Array containing keys
+     */
     public String[] getKeys() {
         return keys;
     }

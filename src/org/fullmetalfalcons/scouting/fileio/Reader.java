@@ -11,7 +11,7 @@ import java.io.*;
 import java.text.ParseException;
 
 /**
- * Handles file input
+ * Reads and imports data from the config file and plists
  *
  * Created by Dan on 1/11/2016.
  */
@@ -19,7 +19,7 @@ public class Reader {
 
     /**
      *Loads the config file and assigns the lines to elements
-     * @param fileName
+     * @param fileName location of the config file
      */
     public static void loadConfig(String fileName){
         try (BufferedReader reader = new BufferedReader(new FileReader(fileName))){
@@ -31,7 +31,7 @@ public class Reader {
                 if (line.length()<2){
                     continue;
                 }
-                //If the line does not start with ##, which indicates a comment, and @ which indicated an eqation
+                //If the line does not start with ##, which indicates a comment, or @ which indicated an equation
                 if (!line.substring(0,2).equals("##") && line.charAt(0)!='@'){
                     //Attempt to add an Element to the main array
                     Main.addElement(line);

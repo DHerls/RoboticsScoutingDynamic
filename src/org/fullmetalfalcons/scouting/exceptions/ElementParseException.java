@@ -1,7 +1,7 @@
 package org.fullmetalfalcons.scouting.exceptions;
 
 /**
- * Custom Exception
+ * Exception thrown when there is an error in parsing Elements from the config file
  *
  * Created by Dan on 1/11/2016.
  */
