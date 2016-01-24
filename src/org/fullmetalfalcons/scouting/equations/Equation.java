@@ -103,11 +103,8 @@ public class Equation {
                         }
                     }
                     break;
-                //In case anyone is stupid enough to add labels to the equation, replace with 0
+                //Labels have no keys, literally can't do anything
                 case LABEL:
-                    for(String key: e.getKeys()){
-                        equation = equation.replace(key,"0");
-                    }
                     break;
                 //Yesses are 1, Nos are 0
                 case SWITCH:

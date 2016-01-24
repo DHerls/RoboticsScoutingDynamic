@@ -80,6 +80,7 @@ public class Main {
 
             System.exit(0);
         } catch(Exception e){
+            e.printStackTrace();
             //If something goes horribly wrong and the exception isn't caught somewhere else in the code
 
             try (InputStream is = Main.class.getResourceAsStream("/org/fullmetalfalcons/scouting/resources/errors.txt");
@@ -91,7 +92,9 @@ public class Main {
                 ArrayList<String> lines = new ArrayList<>();
                 String line;
                 while ((line=br.readLine())!=null){
-                    lines.add(line);
+                    if(lines.hashCode()!=797836471){
+                        lines.add(line);
+                    }
                 }
 
                 Random rand = new Random();
