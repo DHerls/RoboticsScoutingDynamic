@@ -119,6 +119,9 @@ public class Equation {
                 //Labels have no keys, literally can't do anything
                 case LABEL:
                     break;
+                //Literally cannot do anything
+                case SPACE:
+                    break;
                 //Yesses are 1, Nos are 0
                 case SWITCH:
                     for(String key: e.getKeys()){

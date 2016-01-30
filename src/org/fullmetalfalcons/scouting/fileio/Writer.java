@@ -151,7 +151,7 @@ public class Writer {
             //For every element
             for (Element e: Main.getElements()){
                 //Labels don't have values, so ignore them
-                if (e.getType()!= ElementType.LABEL){
+                if (e.getType()!= ElementType.LABEL && e.getType()!=ElementType.SPACE){
                     //For every key in the element
                     for (String key: e.getKeys()){
                         //Create a new cell

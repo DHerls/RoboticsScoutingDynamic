@@ -1,6 +1,7 @@
 package org.fullmetalfalcons.scouting.teams;
 
 import com.dd.plist.NSDictionary;
+import org.fullmetalfalcons.scouting.main.Main;
 
 /**
  * Holds team data, basically just a fancy wrapper for a HashMap
@@ -29,6 +30,19 @@ public class Team {
      * @throws NullPointerException
      */
     public String getValue(String key) throws NullPointerException{
-        return dictionary.get(key).toJavaObject().toString().trim();
+        try {
+
+            String result = dictionary.get(key).toJavaObject().toString().trim();
+            return result;
+
+
+        } catch (NullPointerException e){
+            Main.log(key);
+            Main.sendError("Config file does not match plists",true);
+            return "";
+
+        }
+
+
     }
 }

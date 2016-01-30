@@ -13,6 +13,7 @@ public enum ElementType {
     STEPPER("stepper"),
     LABEL("label"),
     SWITCH("switch"),
+    SPACE("space"),
     SLIDER("slider");
 
     private final String key;

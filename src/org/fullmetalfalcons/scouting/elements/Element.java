@@ -79,8 +79,8 @@ public class Element {
             }
             this.keys = keyList;
 
-            //If LABEL
-        } else {
+            //Cannot get any information from SPACE
+        } else if (type!=ElementType.SPACE){
             descriptions = new String[1];
             descriptions[0] = splitLine[1].trim();
         }
