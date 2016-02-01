@@ -62,7 +62,7 @@ public class Element {
 
 
         //Labels don't have keys, so they need to be parsed differently
-        if (type!=ElementType.LABEL){
+        if (type!=ElementType.LABEL && type!=ElementType.SPACE){
             //Get Descriptions
             String descriptions = splitLine[1];
             String[] descriptionList = descriptions.split(",");
@@ -80,7 +80,7 @@ public class Element {
             this.keys = keyList;
 
             //Cannot get any information from SPACE
-        } else if (type!=ElementType.SPACE){
+        } else if (type==ElementType.LABEL){
             descriptions = new String[1];
             descriptions[0] = splitLine[1].trim();
         }
