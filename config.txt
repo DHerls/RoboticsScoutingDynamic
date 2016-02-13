@@ -64,25 +64,33 @@
 
 ## --------PUT INTERFACE STUFF HERE--------
 
-LABEL 				<distinguished, center>;;Autonomous
-SEGMENTED_CONTROL	<Yes,No>;;Reaches defenses?;;aut_reaches_defenses
-LABEL 				<normal, center>;;Can overcome defense (check all that apply)
+LABEL 				<distinguished, center>;;				Autonomous
+SEGMENTED_CONTROL	<Yes,No>;;								Reaches defenses?;;					aut_reaches_defenses
+LABEL 				<normal, `center>;;						Can overcome defense (check all that apply)
 SWITCH 				;;Portcullis,Cheval Frise,Moat,Ramparts;;aut_portcullis,aut_chevalDeFrise,aut_moat,aut_ramparts
 SWITCH 				;;Drawbridge,Sally Port,Rock wall,Rough Terrain;;aut_drawbridge,aut_sallyport,aut_rockwall,aut_rough_terrain
-SEGMENTED_CONTROL 	<High tower,Low Tower,Try/Fail, None>;;Scores tower?;;aut_shoots
-SEGMENTED_CONTROL 	<Yes,No,Try/Fail>;;Can pass under low bar;;aut_underLowBar
+SEGMENTED_CONTROL 	<High tower,Low Tower,Try/Fail, None>;;	Scores tower?;;						aut_shoots
+SEGMENTED_CONTROL 	<Yes,No,Try/Fail>;;						Can pass under low bar;;			aut_underLowBar
+SLIDER 				<0,10>;;								Shot Accuracy;;						aut_shot_accuracy
 
-LABEL 				<distinguished, center>;;TeleOp
-SEGMENTED_CONTROL 	<Neutral Zone, Spy>;;Starting Positions;;teleop_starting_position
+LABEL 				<distinguished, center>;;				TeleOp
+SEGMENTED_CONTROL 	<Neutral Zone, Spy>;;					Starting Positions;;				teleop_starting_position
 LABEL 				<normal, center>;;Can overcome defense (check all that apply)
 SWITCH 				;;Portcullis,Cheval Frise,Moat,Ramparts;;teleop_portcullis,teleop_chevalDeFrise,teleop_moat,teleop_ramparts
 SWITCH 				;;Drawbridge,Sally Port,Rock wall,Rough Terrain;;teleop_drawbridge,teleop_sallyport,teleop_rockwall,teleop_rough_terrain
-SEGMENTED_CONTROL 	<Yes,No,Try/Fail>;;Can pass under low bar;;teleop_underLowBar
-SEGMENTED_CONTROL 	<Yes,No,Try/Fail>;;Can Climb?;;teleop_climbing
-SLIDER 				<0,10>;;Shot Accuracy;;teleop_shot_accuracy
+SEGMENTED_CONTROL 	<Yes,No,Try/Fail>;;						Can pass under low bar;;			teleop_underLowBar
+SEGMENTED_CONTROL 	<Yes,No,Try/Fail>;;						Can Climb?;;						teleop_climbing
+SEGMENTED_CONTROL 	<Yes,No>;;								Is a defender bot?;;				teleop_defender_bot
+STEPPER 			<0,99>;;								Shots Made High Goal;;				teleop_shots_highgoal
+STEPPER 			<0,99>;;								Shots Made Low Goal;;				teleop_shots_lowgoal
+SLIDER 				<0,10>;;								Shot Accuracy;;						teleop_shot_accuracy
+TEXTFIELD 			<number>;;								Total Points;;						teleop_total_points
+TEXTFIELD 			<normal>;;								Final Thoughts?;;					teleop_general_info
 
-LABEL 				<distinguished, center>;;Human Players
-SLIDER 				<0,10>;;Effectiveness of gestures to drive team;;human_effective_gesture
+LABEL 				<distinguished, center>;;				Human Players
+SEGMENTED_CONTROL 	<Yes, No>;;								Can team utilize gestures?;;		human_uses_gestures
+SLIDER 				<0,10>;;								Is the human player effective?;;	human_effective
+SPACE
 
 ## --------END INTERFACE STUFF--------
 

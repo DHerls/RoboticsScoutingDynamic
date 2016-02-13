@@ -53,25 +53,27 @@ public class Equation {
                 case SEGMENTED_CONTROL:
                     String[] args = e.getArguments();
                     //The program can only parse if the options are "Yes", "No", and "Try/Fail"
-                    if (args[0].equalsIgnoreCase("yes") && args[1].equalsIgnoreCase("no")
-                            && args[2].equalsIgnoreCase("try/fail")){
-                        for (String key: e.getKeys()){
-                            switch(t.getValue(key).toLowerCase()){
-                                case "yes":
-                                    equation = equation.replace(key,"1");
-                                    break;
-                                case "no":
-                                    equation = equation.replace(key,"0");
-                                    break;
-                                case "try/fail":
-                                    equation = equation.replace(key,"0.5");
-                                    break;
+                    if (args.length==3) {
+                        if (args[0].equalsIgnoreCase("yes") && args[1].equalsIgnoreCase("no")
+                                && args[2].equalsIgnoreCase("try/fail")) {
+                            for (String key : e.getKeys()) {
+                                switch (t.getValue(key).toLowerCase()) {
+                                    case "yes":
+                                        equation = equation.replace(key, "1");
+                                        break;
+                                    case "no":
+                                        equation = equation.replace(key, "0");
+                                        break;
+                                    case "try/fail":
+                                        equation = equation.replace(key, "0.5");
+                                        break;
+                                }
                             }
-                        }
 
-                    } else {
-                        for (String key: e.getKeys()){
-                            equation = equation.replace(key,"0");
+                        } else {
+                            for (String key : e.getKeys()) {
+                                equation = equation.replace(key, "0");
+                            }
                         }
                     }
                     break;

@@ -359,6 +359,9 @@ public class Writer {
                         sectionStart = headerPosition;
                     }
                     break;
+                case SPACE:
+                    //No keys
+                    break;
                 default:
                     //For every key
                     for (String key:e.getKeys()){
