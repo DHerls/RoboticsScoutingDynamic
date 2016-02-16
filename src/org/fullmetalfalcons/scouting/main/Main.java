@@ -5,6 +5,8 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.sql.Connection;
+import java.sql.DriverManager;
 import java.util.ArrayList;
 import java.util.Random;
 
@@ -16,6 +18,7 @@ import org.fullmetalfalcons.scouting.exceptions.ElementParseException;
 import org.fullmetalfalcons.scouting.exceptions.EquationParseException;
 import org.fullmetalfalcons.scouting.fileio.Reader;
 import org.fullmetalfalcons.scouting.fileio.Writer;
+import org.fullmetalfalcons.scouting.sql.SqlWriter;
 import org.fullmetalfalcons.scouting.teams.Team;
 
 import com.dd.plist.NSDictionary;
@@ -48,6 +51,7 @@ public class Main {
     //3rd argument is location to export results
     public static void main(String args[]){
         try {
+
             //Crash Test Dummy \/ \/ \/
             //String a = args[5];
 
@@ -78,10 +82,10 @@ public class Main {
             log("Starting to write file");
 
             //Writes data to Excel spreadsheet
-            Writer.write(args.length<3 ? "" :args[2]);
-
+            //Writer.write(args.length<3 ? "" :args[2]);
+            SqlWriter.write();
             //Asks user if they would like to open the Excel workbook
-            exitDialogue();
+            //exitDialogue();
 
             log("Exiting program");
 

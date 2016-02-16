@@ -112,7 +112,7 @@ SPACE
 ##          - SLIDER - See: STEPPER
 ##      If an Element besides the ones listed above is used, the program will replace its value with 0.
 
-@EQUATION AUTONOMOUS=(2*aut_reaches_defenses+2*aut_crosses_defenses+aut_portcullis+aut_sallyport) / 4
+@EQUATION AUTONOMOUS=(2*aut_reaches_defenses+2*aut_crosses_defenses+aut_portcullis+aut_sallyport)/4
 @EQUATION TELEOP=(teleop_portcullis+teleop_chevalDeFrise+teleop_moat+teleop_ramparts+teleop_drawbridge+teleop_sallyport+teleop_rockwall+teleop_rough_terrain) / 8
 @EQUATION HUMAN=0
 
