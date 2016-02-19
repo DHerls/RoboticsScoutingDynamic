@@ -136,23 +136,23 @@ public class Element {
         switch(type){
             case SEGMENTED_CONTROL:
                 for (String s: arguments){
-                    values.add(keys[0]+"_"+s.split(" ")[0]);
+                    values.add(keys[0]+"_"+s.trim());
                 }
                 break;
             case TEXTFIELD:
                 if (arguments[0].equalsIgnoreCase("number") || arguments[0].equalsIgnoreCase("decimal")){
-                    values.add(keys[0]);
+                    values.add(keys[0].trim());
                 }
                 break;
             case STEPPER:
-                values.add(keys[0]);
+                values.add(keys[0].trim());
                 break;
             case LABEL:
                 break;
             case SWITCH:
                 for (String key: keys){
-                    values.add(key+"_yes");
-                    values.add(key+"_no");
+                    values.add(key.trim()+"_yes");
+                    values.add(key.trim()+"_no");
                 }
                 break;
             case SPACE:
@@ -163,8 +163,15 @@ public class Element {
         }
 
         for (int i = 0; i< values.size();i++){
-            values.set(i, values.get(i).replace("\\","_").replace("/","_"));
+            values.set(i, values.get(i)
+                    .replace("\\","_")
+                    .replace("/","_")
+                    .replace(" ","_")
+                    .toLowerCase()
+                    .trim());
         }
+
+        this.values = values.toArray(new String[0]);
         
         return this.values;
     }

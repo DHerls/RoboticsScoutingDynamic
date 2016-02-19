@@ -125,7 +125,7 @@ public class SqlUtil {
     }
 
     public static String[] getArrayFromString(String match_nums) {
-        String substring = match_nums.substring(1,match_nums.length()-2);
+        String substring = match_nums.substring(1,match_nums.length()-1);
         return substring.split(", ");
     }
 
@@ -134,27 +134,24 @@ public class SqlUtil {
         try {
             meta = c.getMetaData();
             ResultSet columnNameSet = meta.getColumns(null,null,tableName,null);
-            PreparedStatement statement = c.prepareStatement("UPDATE " + tableName + "SET ? = ? WHERE team_num=" + teamNum);
-
+            PreparedStatement statement;
             Iterable<Object> oi = Arrays.asList(records);
             Iterator<Object> iterator = oi.iterator();
-
             while (columnNameSet.next()){
-                statement.setString(1,columnNameSet.getString("COLUMN_NAME"));
+                statement = c.prepareStatement("UPDATE " + tableName + " SET "+columnNameSet.getString("COLUMN_NAME")+" = ? WHERE team_num = " + teamNum);
                 Object o = iterator.next();
                 if (o instanceof Object[]){
-                    statement.setString(2,getArrayString((Object[]) o));
+                    statement.setString(1,getArrayString((Object[]) o));
                 } else if (o instanceof Integer) {
-                    statement.setString(2,o.toString());
+                    statement.setString(1,o.toString());
                 } else if (o instanceof String){
-                    statement.setString(2,"\'"+o+"\'");
+                    statement.setString(1,"\'"+o+"\'");
                 } else if (o instanceof Double){
-                    statement.setString(2,o.toString());
+                    statement.setString(1,o.toString());
                 }
-                statement.addBatch();
+                statement.execute();
+                statement.close();
             }
-            statement.executeBatch();
-            statement.close();
         } catch (SQLException e) {
             e.printStackTrace();
         }

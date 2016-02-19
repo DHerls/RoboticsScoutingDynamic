@@ -1,6 +1,7 @@
 package org.fullmetalfalcons.scouting.sql;
 
 import org.fullmetalfalcons.scouting.elements.Element;
+import org.fullmetalfalcons.scouting.elements.ElementType;
 import org.fullmetalfalcons.scouting.main.Main;
 import org.fullmetalfalcons.scouting.teams.Team;
 
@@ -84,43 +85,45 @@ public class SqlWriter {
                 switch (e.getType()){
 
                     case SEGMENTED_CONTROL:
-                        for (String value: e.getArguments()){
-                            if (t.getValue(e.getKeys()[0]).equals(value)){
-                                records.add(1+teamSet.getInt((e.getKeys()[0] + "_" + value.split(" ")[0]).toLowerCase()));
+                        for (int i = 0; i<e.getArguments().length;i++){
+                            if (t.getValue(e.getKeys()[0]).equals(e.getArguments()[i])){
+                                System.out.println("add One");
+                                records.add(1+teamSet.getInt(e.getColumnValues()[i]));
                             } else {
-                                records.add(teamSet.getInt((e.getKeys()[0] + "_" + value.split(" ")[0]).toLowerCase()));
+                                System.out.println("Don't add one");
+                                records.add(teamSet.getInt(e.getColumnValues()[i]));
                             }
                         }
                         break;
                     case TEXTFIELD:
                         if (e.getArguments()[0].equalsIgnoreCase("number") || e.getArguments()[0].equalsIgnoreCase("decimal")){
                             try {
-                                records.add(Integer.parseInt(t.getValue(e.getKeys()[0])) + teamSet.getInt(e.getKeys()[0]));
+                                records.add(Integer.parseInt(t.getValue(e.getKeys()[0])) + teamSet.getInt(e.getColumnValues()[0]));
                             } catch (NumberFormatException e1){
-                                records.add(Double.parseDouble(t.getValue(e.getKeys()[0]))+ teamSet.getDouble(e.getKeys()[0]));
+                                records.add(Double.parseDouble(t.getValue(e.getKeys()[0]))+ teamSet.getDouble(e.getColumnValues()[0]));
                             }
                         }
                         break;
                     case STEPPER:
-                        records.add(Integer.parseInt(t.getValue(e.getKeys()[0])) + teamSet.getInt(e.getKeys()[0]));
+                        records.add(Integer.parseInt(t.getValue(e.getKeys()[0])) + teamSet.getInt(e.getColumnValues()[0]));
                         break;
                     case LABEL:
                         break;
                     case SWITCH:
-                        for (String key: e.getKeys()){
-                            if (t.getValue(key).equals("yes")){
-                                records.add(1 + teamSet.getInt(key+"_yes"));
-                                records.add(teamSet.getInt(key+"_no"));
+                        for (int i = 0; i<e.getKeys().length;i++){
+                            if (t.getValue(e.getKeys()[i]).equals("yes")){
+                                records.add(1 + teamSet.getInt(e.getColumnValues()[i*2]));
+                                records.add(teamSet.getInt(e.getColumnValues()[i*2+1]));
                             } else {
-                                records.add(teamSet.getInt(key+"_yes"));
-                                records.add(1 + teamSet.getInt(key + "_no"));
+                                records.add(teamSet.getInt(e.getColumnValues()[i*2]));
+                                records.add(1 + teamSet.getInt(e.getColumnValues()[i*2+1]));
                             }
                         }
                         break;
                     case SPACE:
                         break;
                     case SLIDER:
-                        records.add(Double.parseDouble(t.getValue(e.getKeys()[0])) + teamSet.getDouble(e.getKeys()[0]));
+                        records.add(Double.parseDouble(t.getValue(e.getKeys()[0])) + teamSet.getDouble(e.getColumnValues()[0]));
                         break;
                 }
             }
