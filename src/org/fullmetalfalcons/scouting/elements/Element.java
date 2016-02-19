@@ -1,7 +1,10 @@
 package org.fullmetalfalcons.scouting.elements;
 
 import org.fullmetalfalcons.scouting.exceptions.ElementParseException;
+import org.fullmetalfalcons.scouting.sql.SqlType;
+import org.fullmetalfalcons.scouting.sql.SqlUtil;
 
+import java.util.ArrayList;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -19,6 +22,7 @@ public class Element {
     private String[] descriptions;
     private String[] keys;
     private String[] arguments;
+    private String[] values;
 
     //The below elements are used to capture the data between arrows <Like this>
     private final String argumentRegex = "<(.*?)>";
@@ -122,5 +126,46 @@ public class Element {
      */
     public String[] getKeys() {
         return keys;
+    }
+    
+    public String[] getColumnValues(){
+        if (values!=null){
+            return values;
+        }
+        ArrayList<String> values = new ArrayList<>();
+        switch(type){
+            case SEGMENTED_CONTROL:
+                for (String s: arguments){
+                    values.add(keys[0]+"_"+s.split(" ")[0]);
+                }
+                break;
+            case TEXTFIELD:
+                if (arguments[0].equalsIgnoreCase("number") || arguments[0].equalsIgnoreCase("decimal")){
+                    values.add(keys[0]);
+                }
+                break;
+            case STEPPER:
+                values.add(keys[0]);
+                break;
+            case LABEL:
+                break;
+            case SWITCH:
+                for (String key: keys){
+                    values.add(key+"_yes");
+                    values.add(key+"_no");
+                }
+                break;
+            case SPACE:
+                break;
+            case SLIDER:
+                values.add(keys[0]);
+                break;
+        }
+
+        for (int i = 0; i< values.size();i++){
+            values.set(i, values.get(i).replace("\\","_").replace("/","_"));
+        }
+        
+        return this.values;
     }
 }

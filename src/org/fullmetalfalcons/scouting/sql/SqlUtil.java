@@ -1,9 +1,13 @@
 package org.fullmetalfalcons.scouting.sql;
 
-import java.sql.Connection;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
+import org.fullmetalfalcons.scouting.elements.Element;
+import org.fullmetalfalcons.scouting.main.Main;
+import org.fullmetalfalcons.scouting.teams.Team;
+
+import java.sql.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Iterator;
 
 /**
  *
@@ -62,6 +66,97 @@ public class SqlUtil {
         } catch (SQLException e) {
             e.printStackTrace();
             return false;
+        }
+    }
+
+    public static void addTeamRecord(Connection c, String tableName, Object[] records) {
+        DatabaseMetaData meta = null;
+        String sql = "INSERT INTO " + tableName + " (";
+        try {
+            meta = c.getMetaData();
+            ResultSet columnNameSet = meta.getColumns(null,null,tableName,null);
+            while (columnNameSet.next()){
+                sql = sql + columnNameSet.getString("COLUMN_NAME") + ", ";
+            }
+            sql = sql.substring(0,sql.length()-2);
+            sql = sql + ") VALUES (";
+            for (Object o: records){
+                if (o instanceof Object[]){
+                    sql = sql + getArrayString((Object[]) o);
+                } else if (o instanceof Integer) {
+                    sql = sql + o;
+                } else if (o instanceof String){
+                    sql = sql + "\'"+o+"\'";
+                } else if (o instanceof Double){
+                    sql = sql + o;
+                }
+                sql = sql + ", ";
+            }
+
+            sql = sql.substring(0,sql.length()-2);
+            sql = sql + ")";
+            Statement statement = c.createStatement();
+            statement.executeUpdate(sql);
+            statement.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private static String getArrayString(Object[] o) {
+        String result = "\'{";
+        for (Object obj: o){
+            result = result + obj.toString() + ", ";
+        }
+        result = result.substring(0,result.length()-2);
+        result = result + "}\'";
+
+        return result;
+    }
+
+    public static ResultSet getTeamRecord(Connection c, String tableName, int team_num) {
+        try {
+            Statement statement = c.createStatement();
+            return statement.executeQuery("SELECT * FROM " + tableName + " WHERE team_num=" +team_num);
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    public static String[] getArrayFromString(String match_nums) {
+        String substring = match_nums.substring(1,match_nums.length()-2);
+        return substring.split(", ");
+    }
+
+    public static void updateTeamRecord(Connection c, String tableName, Object[] records, String teamNum) {
+        DatabaseMetaData meta = null;
+        try {
+            meta = c.getMetaData();
+            ResultSet columnNameSet = meta.getColumns(null,null,tableName,null);
+            PreparedStatement statement = c.prepareStatement("UPDATE " + tableName + "SET ? = ? WHERE team_num=" + teamNum);
+
+            Iterable<Object> oi = Arrays.asList(records);
+            Iterator<Object> iterator = oi.iterator();
+
+            while (columnNameSet.next()){
+                statement.setString(1,columnNameSet.getString("COLUMN_NAME"));
+                Object o = iterator.next();
+                if (o instanceof Object[]){
+                    statement.setString(2,getArrayString((Object[]) o));
+                } else if (o instanceof Integer) {
+                    statement.setString(2,o.toString());
+                } else if (o instanceof String){
+                    statement.setString(2,"\'"+o+"\'");
+                } else if (o instanceof Double){
+                    statement.setString(2,o.toString());
+                }
+                statement.addBatch();
+            }
+            statement.executeBatch();
+            statement.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
     }
 }

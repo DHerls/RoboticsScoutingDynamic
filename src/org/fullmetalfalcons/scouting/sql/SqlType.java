@@ -48,7 +48,7 @@ public enum SqlType {
             case SPACE:
                 return null;
             case SLIDER:
-                return INTEGER;
+                return DECIMAL;
             default:
                 return null;
         }

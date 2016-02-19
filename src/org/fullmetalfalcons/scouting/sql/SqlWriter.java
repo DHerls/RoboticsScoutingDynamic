@@ -2,10 +2,14 @@ package org.fullmetalfalcons.scouting.sql;
 
 import org.fullmetalfalcons.scouting.elements.Element;
 import org.fullmetalfalcons.scouting.main.Main;
+import org.fullmetalfalcons.scouting.teams.Team;
 
 import java.sql.*;
+import java.util.ArrayList;
+import java.util.Arrays;
 
 /**
+ *
  * Created by djher on 2/16/2016.
  */
 public class SqlWriter {
@@ -28,17 +32,13 @@ public class SqlWriter {
             if (!res.next() || res.getString("TABLE_NAME") == null) {
                 Main.log("Table doesn't exist, creating one");
                 SqlUtil.createTable(c, TABLE_NAME, "team_num");
-                SqlUtil.addColumn(c, TABLE_NAME, "team_name", SqlType.STRING, false);
                 SqlUtil.addColumn(c, TABLE_NAME, "team_color", SqlType.STRING, false);
                 SqlUtil.addColumn(c, TABLE_NAME, "num_matches", SqlType.INTEGER, false);
-                SqlUtil.addColumn(c, TABLE_NAME, "match_nums", SqlType.STRING, false);
+                SqlUtil.addColumn(c, TABLE_NAME, "match_nums", SqlType.STRING, true);
                 addElementColumns();
             } else {
                 Main.log("Table " + TABLE_NAME + " exists");
             }
-
-            System.out.println(SqlUtil.doesTeamRecordExist(c,TABLE_NAME,4557));
-            System.out.println(SqlUtil.doesTeamRecordExist(c,TABLE_NAME,3));
 
             updateRecords();
 
@@ -50,36 +50,147 @@ public class SqlWriter {
     }
 
     private static void updateRecords() {
+        ArrayList<Object> records = new ArrayList<>();
+
+        for (Team t: Main.getTeams()){
+            records.clear();
+            if (SqlUtil.doesTeamRecordExist(c,TABLE_NAME,Integer.parseInt(t.getValue("team_num")))){
+                updateTeamRecord(t);
+            } else {
+                addNewTeam(t);
+
+            }
+        }
 
     }
 
-    private static void addElementColumns() {
-        for (Element e: Main.getElements()){
-            switch(e.getType()){
+    private static void updateTeamRecord(Team t) {
+        ArrayList<Object> records = new ArrayList<>();
+        ResultSet teamSet = SqlUtil.getTeamRecord(c, TABLE_NAME, Integer.parseInt(t.getValue("team_num")));
+        try {
+            ArrayList<String> matches = new ArrayList<>(Arrays.asList(SqlUtil.getArrayFromString(teamSet.getString("match_nums"))));
+            for (String m: matches) {
+                if (t.getValue("match_num").equals(m)) {
+                    return;
+                }
+            }
+
+            records.add(Integer.parseInt(t.getValue("team_num")));
+            records.add(t.getValue("team_color"));
+            records.add(1+teamSet.getInt("num_matches"));
+            matches.add(t.getValue("match_num"));
+            records.add(matches.toArray(new String[0]));
+            for(Element e: Main.getElements()){
+                switch (e.getType()){
+
+                    case SEGMENTED_CONTROL:
+                        for (String value: e.getArguments()){
+                            if (t.getValue(e.getKeys()[0]).equals(value)){
+                                records.add(1+teamSet.getInt((e.getKeys()[0] + "_" + value.split(" ")[0]).toLowerCase()));
+                            } else {
+                                records.add(teamSet.getInt((e.getKeys()[0] + "_" + value.split(" ")[0]).toLowerCase()));
+                            }
+                        }
+                        break;
+                    case TEXTFIELD:
+                        if (e.getArguments()[0].equalsIgnoreCase("number") || e.getArguments()[0].equalsIgnoreCase("decimal")){
+                            try {
+                                records.add(Integer.parseInt(t.getValue(e.getKeys()[0])) + teamSet.getInt(e.getKeys()[0]));
+                            } catch (NumberFormatException e1){
+                                records.add(Double.parseDouble(t.getValue(e.getKeys()[0]))+ teamSet.getDouble(e.getKeys()[0]));
+                            }
+                        }
+                        break;
+                    case STEPPER:
+                        records.add(Integer.parseInt(t.getValue(e.getKeys()[0])) + teamSet.getInt(e.getKeys()[0]));
+                        break;
+                    case LABEL:
+                        break;
+                    case SWITCH:
+                        for (String key: e.getKeys()){
+                            if (t.getValue(key).equals("yes")){
+                                records.add(1 + teamSet.getInt(key+"_yes"));
+                                records.add(teamSet.getInt(key+"_no"));
+                            } else {
+                                records.add(teamSet.getInt(key+"_yes"));
+                                records.add(1 + teamSet.getInt(key + "_no"));
+                            }
+                        }
+                        break;
+                    case SPACE:
+                        break;
+                    case SLIDER:
+                        records.add(Double.parseDouble(t.getValue(e.getKeys()[0])) + teamSet.getDouble(e.getKeys()[0]));
+                        break;
+                }
+            }
+
+                SqlUtil.updateTeamRecord(c,TABLE_NAME,records.toArray(new Object[0]),t.getValue("team_num"));
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private static void addNewTeam(Team t) {
+        ArrayList<Object> records = new ArrayList<>();
+        records.add(Integer.parseInt(t.getValue("team_num")));
+        records.add(t.getValue("team_color"));
+        records.add(1);
+        Integer[] matchNums = {Integer.parseInt(t.getValue("match_num"))};
+        records.add(matchNums);
+        for(Element e: Main.getElements()){
+            switch (e.getType()){
+
                 case SEGMENTED_CONTROL:
-                    for (String s: e.getArguments()){
-                        SqlUtil.addColumn(c,TABLE_NAME,e.getKeys()[0]+"_"+s,SqlType.getType(e));
+                    for (String value: e.getArguments()){
+                        if (t.getValue(e.getKeys()[0]).equals(value)){
+                            records.add(1);
+                        } else {
+                            records.add(0);
+                        }
                     }
                     break;
                 case TEXTFIELD:
                     if (e.getArguments()[0].equalsIgnoreCase("number") || e.getArguments()[0].equalsIgnoreCase("decimal")){
-                        SqlUtil.addColumn(c,TABLE_NAME,e.getKeys()[0],SqlType.getType(e));
+                        try {
+                            records.add(Integer.parseInt(t.getValue(e.getKeys()[0])));
+                        } catch (NumberFormatException e1){
+                            records.add(Double.parseDouble(t.getValue(e.getKeys()[0])));
+                        }
                     }
                     break;
                 case STEPPER:
-                    SqlUtil.addColumn(c,TABLE_NAME,e.getKeys()[0],SqlType.getType(e));
+                    records.add(Integer.parseInt(t.getValue(e.getKeys()[0])));
                     break;
                 case LABEL:
                     break;
                 case SWITCH:
-                    SqlUtil.addColumn(c,TABLE_NAME,e.getKeys()[0]+"_yes",SqlType.getType(e));
-                    SqlUtil.addColumn(c,TABLE_NAME,e.getKeys()[0]+"_no",SqlType.getType(e));
+                    for (String key: e.getKeys()){
+                        if (t.getValue(key).equals("yes")){
+                            records.add(1);
+                            records.add(0);
+                        } else {
+                            records.add(0);
+                            records.add(1);
+                        }
+                    }
                     break;
                 case SPACE:
                     break;
                 case SLIDER:
-                    SqlUtil.addColumn(c,TABLE_NAME,e.getKeys()[0],SqlType.getType(e));
+                    records.add(Double.parseDouble(t.getValue(e.getKeys()[0])));
                     break;
+            }
+        }
+
+        SqlUtil.addTeamRecord(c,TABLE_NAME,records.toArray(new Object[0]));
+    }
+
+    private static void addElementColumns() {
+        for (Element e: Main.getElements()){
+            for (String s : e.getColumnValues()){
+                SqlUtil.addColumn(c,TABLE_NAME,s,SqlType.getType(e));
             }
         }
     }
