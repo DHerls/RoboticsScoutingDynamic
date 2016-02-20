@@ -69,7 +69,11 @@
 	<key>teleop_starting_position</key>
 	<string>Neutral Zone</string>
 	<key>teleop_total_points</key>
-	<string>0</string>
+	<integer>0</integer>
+	<key>teleop_normal_fouls</key>
+    <integer>0</integer>
+    <key>teleop_tenchnical_fouls</key>
+    <integer>0</integer>
 	<key>teleop_underLowBar</key>
 	<string>Yes</string>
 </dict>

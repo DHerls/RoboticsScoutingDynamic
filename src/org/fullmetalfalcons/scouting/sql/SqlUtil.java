@@ -91,7 +91,7 @@ public class SqlUtil {
 
             sql = sql.substring(0,sql.length()-2);
             sql = sql + ")";
-            System.out.println(sql);
+//            System.out.println(sql);
             Statement statement = c.createStatement();
             statement.executeUpdate(sql);
             statement.close();

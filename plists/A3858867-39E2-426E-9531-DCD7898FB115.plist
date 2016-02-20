@@ -3,7 +3,7 @@
 <plist version="1.0">
 <dict>
 	<key></key>
-	<string></string>
+	<string>0</string>
 	<key>aut_chevalDeFrise</key>
 	<string>No</string>
 	<key>aut_drawbridge</key>
@@ -33,11 +33,11 @@
 	<key>human_uses_gestures</key>
 	<string>Yes</string>
 	<key>match_num</key>
-	<integer>9</integer>
+	<integer>7</integer>
 	<key>team_color</key>
 	<string>Blue</string>
 	<key>team_num</key>
-	<integer>8282</integer>
+	<integer>4557</integer>
 	<key>teleop_chevalDeFrise</key>
 	<string>No</string>
 	<key>teleop_climbing</key>
@@ -70,7 +70,12 @@
 	<string>Neutral Zone</string>
 	<key>teleop_total_points</key>
 	<integer>0</integer>
+	<key>teleop_normal_fouls</key>
+    <integer>0</integer>
+    <key>teleop_tenchnical_fouls</key>
+    <integer>0</integer>
 	<key>teleop_underLowBar</key>
 	<string>Yes</string>
 </dict>
 </plist>
+
