@@ -33,7 +33,7 @@
 	<key>human_uses_gestures</key>
 	<string>Yes</string>
 	<key>match_num</key>
-	<integer>6</integer>
+	<integer>9</integer>
 	<key>team_color</key>
 	<string>Blue</string>
 	<key>team_num</key>

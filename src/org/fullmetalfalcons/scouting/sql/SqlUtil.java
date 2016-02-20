@@ -1,11 +1,6 @@
 package org.fullmetalfalcons.scouting.sql;
 
-import org.fullmetalfalcons.scouting.elements.Element;
-import org.fullmetalfalcons.scouting.main.Main;
-import org.fullmetalfalcons.scouting.teams.Team;
-
 import java.sql.*;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
 
@@ -13,6 +8,7 @@ import java.util.Iterator;
  *
  * Created by Dan on 2/17/2016.
  */
+@SuppressWarnings("SameParameterValue")
 public class SqlUtil {
 
     public static boolean addColumn(Connection c,String tableName, String columnName, SqlType type){
@@ -70,7 +66,7 @@ public class SqlUtil {
     }
 
     public static void addTeamRecord(Connection c, String tableName, Object[] records) {
-        DatabaseMetaData meta = null;
+        DatabaseMetaData meta;
         String sql = "INSERT INTO " + tableName + " (";
         try {
             meta = c.getMetaData();
@@ -95,6 +91,7 @@ public class SqlUtil {
 
             sql = sql.substring(0,sql.length()-2);
             sql = sql + ")";
+            System.out.println(sql);
             Statement statement = c.createStatement();
             statement.executeUpdate(sql);
             statement.close();
@@ -125,7 +122,9 @@ public class SqlUtil {
     }
 
     public static String[] getArrayFromString(String match_nums) {
-        String substring = match_nums.substring(1,match_nums.length()-1);
+        System.out.println(match_nums);
+        String substring = match_nums.replace("{","").replace("}","").replace("\'","");
+        System.out.println(substring);
         return substring.split(", ");
     }
 
@@ -142,10 +141,13 @@ public class SqlUtil {
                 Object o = iterator.next();
                 if (o instanceof Object[]){
                     statement.setString(1,getArrayString((Object[]) o));
+                    //System.out.println(Arrays.toString((String[]) o));
+                    //System.out.println(getArrayString((Object[]) o));
                 } else if (o instanceof Integer) {
                     statement.setString(1,o.toString());
                 } else if (o instanceof String){
                     statement.setString(1,"\'"+o+"\'");
+
                 } else if (o instanceof Double){
                     statement.setString(1,o.toString());
                 }

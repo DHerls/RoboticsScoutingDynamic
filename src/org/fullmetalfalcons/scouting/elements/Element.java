@@ -1,8 +1,6 @@
 package org.fullmetalfalcons.scouting.elements;
 
 import org.fullmetalfalcons.scouting.exceptions.ElementParseException;
-import org.fullmetalfalcons.scouting.sql.SqlType;
-import org.fullmetalfalcons.scouting.sql.SqlUtil;
 
 import java.util.ArrayList;
 import java.util.regex.Matcher;
@@ -171,7 +169,7 @@ public class Element {
                     .trim());
         }
 
-        this.values = values.toArray(new String[0]);
+        this.values = values.toArray(new String[values.size()]);
         
         return this.values;
     }

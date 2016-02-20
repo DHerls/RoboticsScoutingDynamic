@@ -3,6 +3,7 @@ package org.fullmetalfalcons.scouting.sql;
 import org.fullmetalfalcons.scouting.elements.Element;
 
 /**
+ *
  * Created by Dan on 2/17/2016.
  */
 public enum SqlType {
@@ -10,12 +11,13 @@ public enum SqlType {
     DECIMAL("DECIMAL"),
     STRING("VARCHAR");
 
-    private String keyword;
+    private final String keyword;
 
     SqlType(String keyword){
         this.keyword = keyword;
     }
 
+    @SuppressWarnings("unused")
     public String getKeyword(){
         return keyword;
     }

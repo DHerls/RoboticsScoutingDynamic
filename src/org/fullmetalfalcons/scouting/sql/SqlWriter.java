@@ -1,7 +1,7 @@
 package org.fullmetalfalcons.scouting.sql;
 
 import org.fullmetalfalcons.scouting.elements.Element;
-import org.fullmetalfalcons.scouting.elements.ElementType;
+import org.fullmetalfalcons.scouting.equations.Equation;
 import org.fullmetalfalcons.scouting.main.Main;
 import org.fullmetalfalcons.scouting.teams.Team;
 
@@ -20,7 +20,6 @@ public class SqlWriter {
     private static final String TABLE_NAME = "team_data";
 
     public static void write() {
-        Statement stmt = null;
         try {
             Class.forName("org.sqlite.JDBC");
             c = DriverManager.getConnection("jdbc:sqlite:" + DATABASE_NAME);
@@ -51,10 +50,7 @@ public class SqlWriter {
     }
 
     private static void updateRecords() {
-        ArrayList<Object> records = new ArrayList<>();
-
         for (Team t: Main.getTeams()){
-            records.clear();
             if (SqlUtil.doesTeamRecordExist(c,TABLE_NAME,Integer.parseInt(t.getValue("team_num")))){
                 updateTeamRecord(t);
             } else {
@@ -80,17 +76,15 @@ public class SqlWriter {
             records.add(t.getValue("team_color"));
             records.add(1+teamSet.getInt("num_matches"));
             matches.add(t.getValue("match_num"));
-            records.add(matches.toArray(new String[0]));
+            records.add(matches.toArray(new String[matches.size()]));
             for(Element e: Main.getElements()){
                 switch (e.getType()){
 
                     case SEGMENTED_CONTROL:
                         for (int i = 0; i<e.getArguments().length;i++){
                             if (t.getValue(e.getKeys()[0]).equals(e.getArguments()[i])){
-                                System.out.println("add One");
                                 records.add(1+teamSet.getInt(e.getColumnValues()[i]));
                             } else {
-                                System.out.println("Don't add one");
                                 records.add(teamSet.getInt(e.getColumnValues()[i]));
                             }
                         }
@@ -127,8 +121,17 @@ public class SqlWriter {
                         break;
                 }
             }
+            double total = 0.0;
 
-                SqlUtil.updateTeamRecord(c,TABLE_NAME,records.toArray(new Object[0]),t.getValue("team_num"));
+            for (Equation e: Main.getEquations()){
+                double value = e.evaluate(t) + teamSet.getDouble(e.getColumnValue());
+                records.add(value);
+                total +=value;
+            }
+
+            records.add(total);
+
+            SqlUtil.updateTeamRecord(c,TABLE_NAME, records.toArray(new Object[records.size()]),t.getValue("team_num"));
 
         } catch (SQLException e) {
             e.printStackTrace();
@@ -186,8 +189,15 @@ public class SqlWriter {
                     break;
             }
         }
+        double total = 0.0;
+        for (Equation e: Main.getEquations()){
+            double value = e.evaluate(t);
+            total+=value;
+            records.add(value);
+        }
+        records.add(total);
 
-        SqlUtil.addTeamRecord(c,TABLE_NAME,records.toArray(new Object[0]));
+        SqlUtil.addTeamRecord(c,TABLE_NAME, records.toArray(new Object[records.size()]));
     }
 
     private static void addElementColumns() {
@@ -196,5 +206,11 @@ public class SqlWriter {
                 SqlUtil.addColumn(c,TABLE_NAME,s,SqlType.getType(e));
             }
         }
+
+        for (Equation e: Main.getEquations()){
+            SqlUtil.addColumn(c,TABLE_NAME,e.getColumnValue(),SqlType.DECIMAL);
+        }
+
+        SqlUtil.addColumn(c,TABLE_NAME,"grand_total",SqlType.DECIMAL);
     }
 }

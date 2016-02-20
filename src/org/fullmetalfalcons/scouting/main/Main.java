@@ -5,8 +5,6 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.sql.Connection;
-import java.sql.DriverManager;
 import java.util.ArrayList;
 import java.util.Random;
 
@@ -82,10 +80,10 @@ public class Main {
             log("Starting to write file");
 
             //Writes data to Excel spreadsheet
-            //Writer.write(args.length<3 ? "" :args[2]);
+            Writer.write(args.length<3 ? "" :args[2]);
             SqlWriter.write();
             //Asks user if they would like to open the Excel workbook
-            //exitDialogue();
+            exitDialogue();
 
             log("Exiting program");
 
