@@ -182,7 +182,7 @@ public class Equation {
                 .replace(" ","_")
                 .toLowerCase()
                 .trim();
-
+        columnValue += "_score";
 
         return this.columnValue;
 

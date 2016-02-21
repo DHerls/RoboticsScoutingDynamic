@@ -54,6 +54,9 @@ public class Element {
         if (argumentMatcher.find()){
             //Group 0 includes <>, Group 1 just has the information inside <>
             arguments = argumentMatcher.group(1).split(",");
+            for (int i = 0; i<arguments.length;i++){
+                arguments[i]=arguments[i].trim();
+            }
         }
 
         //Retrieves the ElementType based on the portion of the first section not in <> i.e. LABEL

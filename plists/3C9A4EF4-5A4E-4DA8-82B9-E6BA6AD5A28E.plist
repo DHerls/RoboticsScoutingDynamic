@@ -31,9 +31,9 @@
 	<key>human_effective</key>
 	<integer>0</integer>
 	<key>human_uses_gestures</key>
-	<string>Yes</string>
+	<string>no</string>
 	<key>match_num</key>
-	<integer>34</integer>
+	<integer>32</integer>
 	<key>team_color</key>
 	<string>Blue</string>
 	<key>team_num</key>

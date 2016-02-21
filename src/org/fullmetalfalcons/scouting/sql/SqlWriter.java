@@ -42,6 +42,13 @@ public class SqlWriter {
 
             updateRecords();
 
+            ResultSet rs = SqlUtil.test(c,TABLE_NAME);
+            while (rs!=null && rs.next()){
+                System.out.println(rs.getInt("team_num") + ":" + rs.getInt("human_uses_gestures_no")*1.0/rs.getInt("num_matches"));
+                System.out.println(rs.getInt("human_uses_gestures_no") + ":" + rs.getInt("num_matches"));
+            }
+
+
             c.close();
 
         } catch (ClassNotFoundException | SQLException e) {
@@ -82,7 +89,7 @@ public class SqlWriter {
 
                     case SEGMENTED_CONTROL:
                         for (int i = 0; i<e.getArguments().length;i++){
-                            if (t.getValue(e.getKeys()[0]).equals(e.getArguments()[i])){
+                            if (t.getValue(e.getKeys()[0]).equalsIgnoreCase(e.getArguments()[i])){
                                 records.add(1+teamSet.getInt(e.getColumnValues()[i]));
                             } else {
                                 records.add(teamSet.getInt(e.getColumnValues()[i]));
@@ -105,7 +112,7 @@ public class SqlWriter {
                         break;
                     case SWITCH:
                         for (int i = 0; i<e.getKeys().length;i++){
-                            if (t.getValue(e.getKeys()[i]).equals("yes")){
+                            if (t.getValue(e.getKeys()[i]).equalsIgnoreCase("yes")){
                                 records.add(1 + teamSet.getInt(e.getColumnValues()[i*2]));
                                 records.add(teamSet.getInt(e.getColumnValues()[i*2+1]));
                             } else {
@@ -150,7 +157,9 @@ public class SqlWriter {
 
                 case SEGMENTED_CONTROL:
                     for (String value: e.getArguments()){
-                        if (t.getValue(e.getKeys()[0]).equals(value)){
+                        if (e.getKeys()[0].equals("human_uses_gestures")){
+                        }
+                        if (t.getValue(e.getKeys()[0]).equalsIgnoreCase(value)){
                             records.add(1);
                         } else {
                             records.add(0);
@@ -173,7 +182,7 @@ public class SqlWriter {
                     break;
                 case SWITCH:
                     for (String key: e.getKeys()){
-                        if (t.getValue(key).equals("yes")){
+                        if (t.getValue(key).equalsIgnoreCase("yes")){
                             records.add(1);
                             records.add(0);
                         } else {
