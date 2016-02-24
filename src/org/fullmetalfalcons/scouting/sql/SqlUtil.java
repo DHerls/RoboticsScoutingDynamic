@@ -91,7 +91,7 @@ public class SqlUtil {
 
             sql = sql.substring(0,sql.length()-2);
             sql = sql + ")";
-            System.out.println(sql);
+//            System.out.println(sql);
             Statement statement = c.createStatement();
             statement.executeUpdate(sql);
             statement.close();
@@ -122,9 +122,7 @@ public class SqlUtil {
     }
 
     public static String[] getArrayFromString(String match_nums) {
-        System.out.println(match_nums);
         String substring = match_nums.replace("{","").replace("}","").replace("\'","");
-        System.out.println(substring);
         return substring.split(", ");
     }
 
@@ -157,5 +155,15 @@ public class SqlUtil {
         } catch (SQLException e) {
             e.printStackTrace();
         }
+    }
+
+    public static ResultSet test (Connection c, String tableName){
+        try {
+            Statement s = c.createStatement();
+            return s.executeQuery("SELECT * FROM " + tableName + " WHERE human_uses_gestures_no * 1.0 / num_matches < .5");
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 }

@@ -54,15 +54,33 @@ public class Main {
             //String a = args[5];
 
             //Program needs to be told where to look for the plist files and config file
-            if(args.length<2){
-                sendError("You have not provided a location for plists or config file",true);
+            if(args.length<2) {
+                sendError("You have not provided a location for plists or config file", true);
             }
+
+                String plistsLocation = "";
+                String configLocation = "";
+                String excelLocation = "";
+                boolean writeExcel = true;
+
+                switch (args.length){
+                default:
+
+                case 4:
+                    writeExcel = Boolean.parseBoolean(args[3]);
+                case 3:
+                    excelLocation = args[2];
+                case 2:
+                    configLocation = args[0];
+                    plistsLocation = args[1];
+                    break;
+
+                }
 
             log("Program Starting");
             log("Starting to load configuration");
 
-            String configLocation = args[0];
-            String plistsLocation = args[1];
+
 
             //Populates ELEMENTS ArrayList from configuration file
             Reader.loadConfig(configLocation);
@@ -84,11 +102,11 @@ public class Main {
 
             SqlWriter.write();
 
-            if (args.length < 4 || Boolean.parseBoolean(args[4])){
+            if (writeExcel){
                 log("Starting to write file");
 
                 //Writes data to Excel spreadsheet
-                Writer.write(args.length<3 ? "" :args[2]);
+                Writer.write(excelLocation);
                 //Asks user if they would like to open the Excel workbook
                 exitDialogue();
             }

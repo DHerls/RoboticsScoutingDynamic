@@ -31,9 +31,9 @@
 	<key>human_effective</key>
 	<integer>0</integer>
 	<key>human_uses_gestures</key>
-	<string>Yes</string>
+	<string>no</string>
 	<key>match_num</key>
-	<integer>34</integer>
+	<integer>32</integer>
 	<key>team_color</key>
 	<string>Blue</string>
 	<key>team_num</key>
@@ -69,7 +69,11 @@
 	<key>teleop_starting_position</key>
 	<string>Neutral Zone</string>
 	<key>teleop_total_points</key>
-	<string>0</string>
+	<integer>0</integer>
+	<key>teleop_normal_fouls</key>
+    <integer>0</integer>
+    <key>teleop_tenchnical_fouls</key>
+    <integer>0</integer>
 	<key>teleop_underLowBar</key>
 	<string>Yes</string>
 </dict>

@@ -8,6 +8,8 @@ import org.fullmetalfalcons.scouting.exceptions.EquationParseException;
 import org.fullmetalfalcons.scouting.main.Main;
 import org.fullmetalfalcons.scouting.teams.Team;
 
+import java.math.BigDecimal;
+
 /**
  * Used to evaluate equations as written in the config file
  * Replaces keys with their associated value
@@ -18,7 +20,7 @@ public class Equation {
 
     private String equation;
     private String name;
-    private String value;
+    private String columnValue;
 
     /**
      * Constructor for Equation class
@@ -151,7 +153,7 @@ public class Equation {
         } catch (SyntaxException e) {
             Main.sendError("Equation " + name + " is formatted incorrectly",false);
         }
-        return value;
+        return round(value,3);
     }
 
     /**
@@ -171,18 +173,25 @@ public class Equation {
     }
 
     public String getColumnValue(){
-        if (this.value!=null){
-            return this.value;
+        if (this.columnValue !=null){
+            return this.columnValue;
         }
 
-        value = name.replace("\\","_")
+        columnValue = name.replace("\\","_")
                 .replace("/","_")
                 .replace(" ","_")
                 .toLowerCase()
                 .trim();
+        columnValue += "_score";
 
+        return this.columnValue;
 
-        return this.value;
+    }
 
+    public double round(double value, int numberOfDigitsAfterDecimalPoint) {
+        BigDecimal bigDecimal = new BigDecimal(value);
+        bigDecimal = bigDecimal.setScale(numberOfDigitsAfterDecimalPoint,
+                BigDecimal.ROUND_HALF_UP);
+        return bigDecimal.doubleValue();
     }
 }
