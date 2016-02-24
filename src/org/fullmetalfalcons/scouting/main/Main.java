@@ -61,8 +61,11 @@ public class Main {
             log("Program Starting");
             log("Starting to load configuration");
 
+            String configLocation = args[0];
+            String plistsLocation = args[1];
+
             //Populates ELEMENTS ArrayList from configuration file
-            Reader.loadConfig(args[0]);
+            Reader.loadConfig(configLocation);
 
             if(ELEMENTS.size()==0){
                 sendError("No Elements found in config file",true);
@@ -73,17 +76,24 @@ public class Main {
             log("Starting to load plists");
 
             //Populates TEAMS ArrayList from plist files, passes location of plists
-            Reader.loadPlists(args[1]);
+            Reader.loadPlists(plistsLocation);
 
             log(TEAMS.size() + " teams loaded");
 
-            log("Starting to write file");
 
-            //Writes data to Excel spreadsheet
-            Writer.write(args.length<3 ? "" :args[2]);
+
             SqlWriter.write();
-            //Asks user if they would like to open the Excel workbook
-            exitDialogue();
+
+            if (args.length < 4 || Boolean.parseBoolean(args[4])){
+                log("Starting to write file");
+
+                //Writes data to Excel spreadsheet
+                Writer.write(args.length<3 ? "" :args[2]);
+                //Asks user if they would like to open the Excel workbook
+                exitDialogue();
+            }
+
+
 
             log("Exiting program");
 
