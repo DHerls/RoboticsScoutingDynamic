@@ -67,10 +67,10 @@ public class Main {
                 default:
 
                 case 4:
-                    writeExcel = Boolean.parseBoolean(args[3]);
+                    excelLocation = args[3];
                 case 3:
-                    excelLocation = args[2];
-                case 2:
+                    writeExcel = Boolean.parseBoolean(args[2]);
+                    case 2:
                     configLocation = args[0];
                     plistsLocation = args[1];
                     break;
