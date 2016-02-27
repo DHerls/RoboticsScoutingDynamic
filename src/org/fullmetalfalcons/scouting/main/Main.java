@@ -68,17 +68,17 @@ public class Main {
 
                 case 4:
                     excelLocation = args[3];
-                    sendError("Argument 4: " + excelLocation,false);
+//                    sendError("Argument 4: " + excelLocation,false);
                 case 3:
                     writeExcel = Boolean.parseBoolean(args[2]);
-                    sendError("Argument 3: " + writeExcel,false);
+//                    sendError("Argument 3: " + writeExcel,false);
 
                 case 2:
                     configLocation = args[0];
                     plistsLocation = args[1];
-                    sendError("Argument 2: " + plistsLocation,false);
+//                    sendError("Argument 2: " + plistsLocation,false);
 
-                    sendError("Argument 1: " + configLocation,false);
+//                    sendError("Argument 1: " + configLocation,false);
 
                     break;
 
