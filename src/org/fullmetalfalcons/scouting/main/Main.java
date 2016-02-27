@@ -58,31 +58,33 @@ public class Main {
                 sendError("You have not provided a location for plists or config file", true);
             }
 
-                String plistsLocation = "";
-                String configLocation = "";
-                String excelLocation = "";
-                boolean writeExcel = true;
+            String plistsLocation = "";
+            String configLocation = "";
+            String excelLocation = "";
+            String SqlLocation = "";
+            boolean writeExcel = true;
 
-                switch (args.length){
+            switch (args.length){
                 default:
 
+                case 5:
+                    excelLocation = args[4];
+    //                    sendError("Argument 4: " + excelLocation,false);
                 case 4:
-                    excelLocation = args[3];
-//                    sendError("Argument 4: " + excelLocation,false);
+                    writeExcel = Boolean.parseBoolean(args[3]);
+    //                    sendError("Argument 3: " + writeExcel,false);
                 case 3:
-                    writeExcel = Boolean.parseBoolean(args[2]);
-//                    sendError("Argument 3: " + writeExcel,false);
-
+                    SqlLocation = args[2];
                 case 2:
                     configLocation = args[0];
                     plistsLocation = args[1];
-//                    sendError("Argument 2: " + plistsLocation,false);
+    //                    sendError("Argument 2: " + plistsLocation,false);
 
-//                    sendError("Argument 1: " + configLocation,false);
+    //                    sendError("Argument 1: " + configLocation,false);
 
-                    break;
+                break;
 
-                }
+            }
 
             log("Program Starting");
             log("Starting to load configuration");
@@ -107,7 +109,7 @@ public class Main {
 
 
 
-            SqlWriter.write();
+            SqlWriter.write(SqlLocation);
 
             if (writeExcel){
                 log("Starting to write file");

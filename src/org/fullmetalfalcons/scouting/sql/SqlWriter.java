@@ -5,6 +5,8 @@ import org.fullmetalfalcons.scouting.equations.Equation;
 import org.fullmetalfalcons.scouting.main.Main;
 import org.fullmetalfalcons.scouting.teams.Team;
 
+import java.io.File;
+import java.io.IOException;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -19,10 +21,17 @@ public class SqlWriter {
     private static final String DATABASE_NAME = "scouting.db";
     private static final String TABLE_NAME = "team_data";
 
-    public static void write() {
+    public static void write(String sqlLocation) {
         try {
             Class.forName("org.sqlite.JDBC");
-            c = DriverManager.getConnection("jdbc:sqlite:" + DATABASE_NAME);
+            File file = new File((sqlLocation.isEmpty()? sqlLocation: sqlLocation.charAt(sqlLocation.length()-1)=='/'?sqlLocation:sqlLocation+"/") + DATABASE_NAME);
+            if (file.getParentFile() != null) {
+                //noinspection ResultOfMethodCallIgnored
+                file.getParentFile().mkdirs();
+            }
+            //noinspection ResultOfMethodCallIgnored
+            file.createNewFile();
+            c = DriverManager.getConnection("jdbc:sqlite:" + file.getAbsolutePath());
 
             DatabaseMetaData meta = c.getMetaData();
             ResultSet res = meta.getTables(null, null, TABLE_NAME,
@@ -52,6 +61,8 @@ public class SqlWriter {
             c.close();
 
         } catch (ClassNotFoundException | SQLException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
             e.printStackTrace();
         }
     }

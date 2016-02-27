@@ -3,7 +3,7 @@
 <plist version="1.0">
 <dict>
 	<key></key>
-	<string>0</string>
+	<string></string>
 	<key>aut_chevalDeFrise</key>
 	<string>No</string>
 	<key>aut_drawbridge</key>
@@ -13,68 +13,68 @@
 	<key>aut_portcullis</key>
 	<string>No</string>
 	<key>aut_ramparts</key>
-	<string>No</string>
-	<key>aut_reaches_defenses</key>
 	<string>Yes</string>
+	<key>aut_reaches_defenses</key>
+	<string>No</string>
 	<key>aut_rockwall</key>
 	<string>No</string>
 	<key>aut_rough_terrain</key>
-	<string>No</string>
+	<string>Yes</string>
 	<key>aut_sallyport</key>
 	<string>No</string>
 	<key>aut_shoots</key>
-	<string>High tower</string>
+	<string>Try/Fail</string>
 	<key>aut_shot_accuracy</key>
-	<integer>0</integer>
+	<string>6.76274</string>
 	<key>aut_underLowBar</key>
-	<string>Yes</string>
+	<string>No</string>
 	<key>human_effective</key>
-	<integer>0</integer>
+	<string>6.15288</string>
 	<key>human_uses_gestures</key>
-	<string>no</string>
+	<string>Yes</string>
 	<key>match_num</key>
-	<integer>32</integer>
+	<integer>66</integer>
 	<key>team_color</key>
-	<string>Blue</string>
+	<string>Red</string>
 	<key>team_num</key>
-	<integer>5464</integer>
+	<integer>5468</integer>
 	<key>teleop_chevalDeFrise</key>
 	<string>No</string>
 	<key>teleop_climbing</key>
 	<string>Yes</string>
 	<key>teleop_defender_bot</key>
-	<string>Yes</string>
+	<string>No</string>
 	<key>teleop_drawbridge</key>
 	<string>No</string>
 	<key>teleop_general_info</key>
-	<string></string>
+	<string>This robot was bomb bomb</string>
 	<key>teleop_moat</key>
-	<string>No</string>
+	<string>Yes</string>
+	<key>teleop_normal_fouls</key>
+	<integer>2</integer>
 	<key>teleop_portcullis</key>
 	<string>No</string>
 	<key>teleop_ramparts</key>
 	<string>No</string>
 	<key>teleop_rockwall</key>
-	<string>No</string>
+	<string>Yes</string>
 	<key>teleop_rough_terrain</key>
 	<string>No</string>
 	<key>teleop_sallyport</key>
 	<string>No</string>
 	<key>teleop_shot_accuracy</key>
-	<integer>0</integer>
+	<string>4.68254</string>
 	<key>teleop_shots_highgoal</key>
-	<integer>0</integer>
+	<integer>2</integer>
 	<key>teleop_shots_lowgoal</key>
-	<integer>0</integer>
+	<integer>2</integer>
 	<key>teleop_starting_position</key>
-	<string>Neutral Zone</string>
+	<string> Spy</string>
+	<key>teleop_technical_fouls</key>
+	<integer>4</integer>
 	<key>teleop_total_points</key>
-	<integer>0</integer>
-	<key>teleop_normal_fouls</key>
-    <integer>0</integer>
-    <key>teleop_tenchnical_fouls</key>
-    <integer>0</integer>
+	<string>55</string>
 	<key>teleop_underLowBar</key>
-	<string>Yes</string>
+	<string>No</string>
 </dict>
 </plist>
