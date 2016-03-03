@@ -32,8 +32,7 @@ public class Team {
     public String getValue(String key) throws NullPointerException{
         try {
 
-            String result = dictionary.get(key).toJavaObject().toString().trim();
-            return result;
+            return dictionary.get(key).toJavaObject().toString().trim();
 
 
         } catch (NullPointerException e){

@@ -2,6 +2,7 @@ package org.fullmetalfalcons.scouting.elements;
 
 import org.fullmetalfalcons.scouting.exceptions.ElementParseException;
 
+import java.util.ArrayList;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -19,6 +20,7 @@ public class Element {
     private String[] descriptions;
     private String[] keys;
     private String[] arguments;
+    private String[] values;
 
     //The below elements are used to capture the data between arrows <Like this>
     private final String argumentRegex = "<(.*?)>";
@@ -52,6 +54,9 @@ public class Element {
         if (argumentMatcher.find()){
             //Group 0 includes <>, Group 1 just has the information inside <>
             arguments = argumentMatcher.group(1).split(",");
+            for (int i = 0; i<arguments.length;i++){
+                arguments[i]=arguments[i].trim();
+            }
         }
 
         //Retrieves the ElementType based on the portion of the first section not in <> i.e. LABEL
@@ -122,5 +127,53 @@ public class Element {
      */
     public String[] getKeys() {
         return keys;
+    }
+    
+    public String[] getColumnValues(){
+        if (values!=null){
+            return values;
+        }
+        ArrayList<String> values = new ArrayList<>();
+        switch(type){
+            case SEGMENTED_CONTROL:
+                for (String s: arguments){
+                    values.add(keys[0]+"_"+s.trim());
+                }
+                break;
+            case TEXTFIELD:
+                if (arguments[0].equalsIgnoreCase("number") || arguments[0].equalsIgnoreCase("decimal")){
+                    values.add(keys[0].trim());
+                }
+                break;
+            case STEPPER:
+                values.add(keys[0].trim());
+                break;
+            case LABEL:
+                break;
+            case SWITCH:
+                for (String key: keys){
+                    values.add(key.trim()+"_yes");
+                    values.add(key.trim()+"_no");
+                }
+                break;
+            case SPACE:
+                break;
+            case SLIDER:
+                values.add(keys[0]);
+                break;
+        }
+
+        for (int i = 0; i< values.size();i++){
+            values.set(i, values.get(i)
+                    .replace("\\","_")
+                    .replace("/","_")
+                    .replace(" ","_")
+                    .toLowerCase()
+                    .trim());
+        }
+
+        this.values = values.toArray(new String[values.size()]);
+        
+        return this.values;
     }
 }

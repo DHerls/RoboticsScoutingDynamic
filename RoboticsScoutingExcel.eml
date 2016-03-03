@@ -39,4 +39,9 @@
 	<lib name="expr.jar" scope="COMPILE">
 		<relative-module-cls project-related="jar://$PROJECT_DIR$/lib/expr.jar!/"/>
 	</lib>
+	<lib name="sqlite-jdbc-3.8.11.2.jar" scope="COMPILE">
+		<srcroot url="jar://$MODULE_DIR$/lib/sqlite-jdbc-3.8.11.2.jar!/"/>
+		<relative-module-src project-related="jar://$PROJECT_DIR$/lib/sqlite-jdbc-3.8.11.2.jar!/"/>
+		<relative-module-cls project-related="jar://$PROJECT_DIR$/lib/sqlite-jdbc-3.8.11.2.jar!/"/>
+	</lib>
 </component>

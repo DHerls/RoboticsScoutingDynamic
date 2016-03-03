@@ -16,6 +16,7 @@ import org.fullmetalfalcons.scouting.exceptions.ElementParseException;
 import org.fullmetalfalcons.scouting.exceptions.EquationParseException;
 import org.fullmetalfalcons.scouting.fileio.Reader;
 import org.fullmetalfalcons.scouting.fileio.Writer;
+import org.fullmetalfalcons.scouting.sql.SqlWriter;
 import org.fullmetalfalcons.scouting.teams.Team;
 
 import com.dd.plist.NSDictionary;
@@ -48,19 +49,50 @@ public class Main {
     //3rd argument is location to export results
     public static void main(String args[]){
         try {
+
             //Crash Test Dummy \/ \/ \/
             //String a = args[5];
 
             //Program needs to be told where to look for the plist files and config file
-            if(args.length<2){
-                sendError("You have not provided a location for plists or config file",true);
+            if(args.length<2) {
+                sendError("You have not provided a location for plists or config file", true);
+            }
+
+            String plistsLocation = "";
+            String configLocation = "";
+            String excelLocation = "";
+            String SqlLocation = "";
+            boolean writeExcel = true;
+
+            switch (args.length){
+                default:
+
+                case 5:
+                    excelLocation = args[4];
+    //                    sendError("Argument 4: " + excelLocation,false);
+                case 4:
+                    writeExcel = Boolean.parseBoolean(args[3]);
+    //                    sendError("Argument 3: " + writeExcel,false);
+                case 3:
+                    SqlLocation = args[2];
+                case 2:
+                    configLocation = args[0];
+                    plistsLocation = args[1];
+    //                    sendError("Argument 2: " + plistsLocation,false);
+
+    //                    sendError("Argument 1: " + configLocation,false);
+
+                break;
+
             }
 
             log("Program Starting");
             log("Starting to load configuration");
 
+
+
             //Populates ELEMENTS ArrayList from configuration file
-            Reader.loadConfig(args[0]);
+            Reader.loadConfig(configLocation);
 
             if(ELEMENTS.size()==0){
                 sendError("No Elements found in config file",true);
@@ -71,17 +103,24 @@ public class Main {
             log("Starting to load plists");
 
             //Populates TEAMS ArrayList from plist files, passes location of plists
-            Reader.loadPlists(args[1]);
+            Reader.loadPlists(plistsLocation);
 
             log(TEAMS.size() + " teams loaded");
 
-            log("Starting to write file");
 
-            //Writes data to Excel spreadsheet
-            Writer.write(args.length<3 ? "" :args[2]);
 
-            //Asks user if they would like to open the Excel workbook
-            exitDialogue();
+            SqlWriter.write(SqlLocation);
+
+            if (writeExcel){
+                log("Starting to write file");
+
+                //Writes data to Excel spreadsheet
+                Writer.write(excelLocation);
+                //Asks user if they would like to open the Excel workbook
+                exitDialogue();
+            }
+
+
 
             log("Exiting program");
 

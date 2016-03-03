@@ -14,5 +14,6 @@
 	<classpathentry kind="lib" path="lib/poi/poi-scratchpad-3.13-20150929.jar"/>
 	<classpathentry kind="lib" path="lib/dd-plist.jar"/>
 	<classpathentry kind="lib" path="lib/expr.jar"/>
+	<classpathentry kind="lib" path="lib/sqlite-jdbc-3.8.11.2.jar" sourcepath="lib/sqlite-jdbc-3.8.11.2.jar"/>
 	<classpathentry kind="output" path="out/production/RoboticsScoutingExcel"/>
 </classpath>

@@ -8,6 +8,8 @@ import org.fullmetalfalcons.scouting.exceptions.EquationParseException;
 import org.fullmetalfalcons.scouting.main.Main;
 import org.fullmetalfalcons.scouting.teams.Team;
 
+import java.math.BigDecimal;
+
 /**
  * Used to evaluate equations as written in the config file
  * Replaces keys with their associated value
@@ -18,7 +20,7 @@ public class Equation {
 
     private String equation;
     private String name;
-
+    private String columnValue;
 
     /**
      * Constructor for Equation class
@@ -51,29 +53,22 @@ public class Equation {
             switch(e.getType()){
 
                 case SEGMENTED_CONTROL:
-                    String[] args = e.getArguments();
                     //The program can only parse if the options are "Yes", "No", and "Try/Fail"
-                    if (args.length==3) {
-                        if (args[0].equalsIgnoreCase("yes") && args[1].equalsIgnoreCase("no")
-                                && args[2].equalsIgnoreCase("try/fail")) {
-                            for (String key : e.getKeys()) {
-                                switch (t.getValue(key).toLowerCase()) {
-                                    case "yes":
-                                        equation = equation.replace(key, "1");
-                                        break;
-                                    case "no":
-                                        equation = equation.replace(key, "0");
-                                        break;
-                                    case "try/fail":
-                                        equation = equation.replace(key, "0.5");
-                                        break;
-                                }
-                            }
-
-                        } else {
-                            for (String key : e.getKeys()) {
+                    for (String key : e.getKeys()) {
+                        switch (t.getValue(key).toLowerCase()) {
+                            case "yes":
+                                equation = equation.replace(key, "1");
+                                break;
+                            case "no":
                                 equation = equation.replace(key, "0");
-                            }
+                                break;
+                            case "try/fail":
+                            case "try_fail":
+                            case "try fail":
+                                equation = equation.replace(key, "0.5");
+                                break;
+                            default:
+                                equation = equation.replace(key, "0");
                         }
                     }
                     break;
@@ -156,9 +151,9 @@ public class Equation {
             //Calculate the value of the equation
             value = expr.value();
         } catch (SyntaxException e) {
-            Main.sendError("Equation error in " + name + ": " + e.toString(),false);
+            Main.sendError("Equation " + name + " is formatted incorrectly",false);
         }
-        return value;
+        return round(value,3);
     }
 
     /**
@@ -175,5 +170,28 @@ public class Equation {
             b.append(s.substring(0,1).toUpperCase()).append(s.substring(1).toLowerCase()).append(" ");
         }
         return b.toString();
+    }
+
+    public String getColumnValue(){
+        if (this.columnValue !=null){
+            return this.columnValue;
+        }
+
+        columnValue = name.replace("\\","_")
+                .replace("/","_")
+                .replace(" ","_")
+                .toLowerCase()
+                .trim();
+        columnValue += "_score";
+
+        return this.columnValue;
+
+    }
+
+    public double round(double value, int numberOfDigitsAfterDecimalPoint) {
+        BigDecimal bigDecimal = new BigDecimal(value);
+        bigDecimal = bigDecimal.setScale(numberOfDigitsAfterDecimalPoint,
+                BigDecimal.ROUND_HALF_UP);
+        return bigDecimal.doubleValue();
     }
 }
