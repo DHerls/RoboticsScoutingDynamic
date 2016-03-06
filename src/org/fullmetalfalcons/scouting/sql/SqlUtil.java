@@ -134,24 +134,27 @@ public class SqlUtil {
             PreparedStatement statement;
             Iterable<Object> oi = Arrays.asList(records);
             Iterator<Object> iterator = oi.iterator();
+            Statement s = c.createStatement();
+            String base = "UPDATE " + tableName + " SET "+columnNameSet.getString("COLUMN_NAME")+" = ? WHERE team_num = " + teamNum;
             while (columnNameSet.next()){
-                statement = c.prepareStatement("UPDATE " + tableName + " SET "+columnNameSet.getString("COLUMN_NAME")+" = ? WHERE team_num = " + teamNum);
                 Object o = iterator.next();
                 if (o instanceof Object[]){
-                    statement.setString(1,getArrayString((Object[]) o));
+                    base = base.replace("?",getArrayString((Object[]) o));
                     //System.out.println(Arrays.toString((String[]) o));
                     //System.out.println(getArrayString((Object[]) o));
                 } else if (o instanceof Integer) {
-                    statement.setString(1,o.toString());
+                    base = base.replace("?",o.toString());
                 } else if (o instanceof String){
-                    statement.setString(1,"\'"+o+"\'");
+                    base = base.replace("?","\'"+o+"\'");
 
                 } else if (o instanceof Double){
-                    statement.setString(1,o.toString());
+                    base = base.replace("?",o.toString());
                 }
-                statement.execute();
-                statement.close();
+
+
             }
+            s.execute(base);
+            s.close();
         } catch (SQLException e) {
             e.printStackTrace();
         }
