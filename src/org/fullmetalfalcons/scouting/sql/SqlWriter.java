@@ -51,13 +51,6 @@ public class SqlWriter {
 
             updateRecords();
 
-            ResultSet rs = SqlUtil.test(c,TABLE_NAME);
-            while (rs!=null && rs.next()){
-                System.out.println(rs.getInt("team_num") + ":" + rs.getInt("human_uses_gestures_no")*1.0/rs.getInt("num_matches"));
-                System.out.println(rs.getInt("human_uses_gestures_no") + ":" + rs.getInt("num_matches"));
-            }
-
-
             c.close();
 
         } catch (ClassNotFoundException | SQLException e) {
@@ -69,7 +62,7 @@ public class SqlWriter {
 
     private static void updateRecords() {
         for (Team t: Main.getTeams()){
-            if (SqlUtil.doesTeamRecordExist(c,TABLE_NAME,Integer.parseInt(t.getValue("team_num")))){
+            if (SqlUtil.doesTeamRecordExist(c,TABLE_NAME,t.getIntValue("team_num"))){
                 updateTeamRecord(t);
             } else {
                 addNewTeam(t);
@@ -81,7 +74,7 @@ public class SqlWriter {
 
     private static void updateTeamRecord(Team t) {
         ArrayList<Object> records = new ArrayList<>();
-        ResultSet teamSet = SqlUtil.getTeamRecord(c, TABLE_NAME, Integer.parseInt(t.getValue("team_num")));
+        ResultSet teamSet = SqlUtil.getTeamRecord(c, TABLE_NAME, t.getIntValue("team_num"));
         try {
             ArrayList<String> matches = new ArrayList<>(Arrays.asList(SqlUtil.getArrayFromString(teamSet.getString("match_nums"))));
             for (String m: matches) {
@@ -90,17 +83,17 @@ public class SqlWriter {
                 }
             }
 
-            records.add(Integer.parseInt(t.getValue("team_num")));
+            records.add(t.getIntValue("team_num"));
             records.add(t.getValue("team_color"));
             records.add(1+teamSet.getInt("num_matches"));
-            matches.add(t.getValue("match_num"));
+            matches.add(t.getStringValue("match_num"));
             records.add(matches.toArray(new String[matches.size()]));
             for(Element e: Main.getElements()){
                 switch (e.getType()){
 
                     case SEGMENTED_CONTROL:
                         for (int i = 0; i<e.getArguments().length;i++){
-                            if (t.getValue(e.getKeys()[0]).equalsIgnoreCase(e.getArguments()[i])){
+                            if (t.getStringValue(e.getKeys()[0]).equalsIgnoreCase(e.getArguments()[i])){
                                 records.add(1+teamSet.getInt(e.getColumnValues()[i]));
                             } else {
                                 records.add(teamSet.getInt(e.getColumnValues()[i]));
@@ -108,22 +101,21 @@ public class SqlWriter {
                         }
                         break;
                     case TEXTFIELD:
-                        if (e.getArguments()[0].equalsIgnoreCase("number") || e.getArguments()[0].equalsIgnoreCase("decimal")){
-                            try {
-                                records.add(Integer.parseInt(t.getValue(e.getKeys()[0])) + teamSet.getInt(e.getColumnValues()[0]));
-                            } catch (NumberFormatException e1){
-                                records.add(Double.parseDouble(t.getValue(e.getKeys()[0]))+ teamSet.getDouble(e.getColumnValues()[0]));
-                            }
+                        if (e.getArguments()[0].equalsIgnoreCase("number")) {
+                            records.add(t.getIntValue(e.getKeys()[0]) + teamSet.getInt(e.getColumnValues()[0]));
+
+                        } else if (e.getArguments()[0].equalsIgnoreCase("decimal")){
+                            records.add(t.getDoubleValue(e.getKeys()[0]) + teamSet.getInt(e.getColumnValues()[0]));
                         }
                         break;
                     case STEPPER:
-                        records.add(Integer.parseInt(t.getValue(e.getKeys()[0])) + teamSet.getInt(e.getColumnValues()[0]));
+                        records.add(t.getIntValue(e.getKeys()[0]) + teamSet.getInt(e.getColumnValues()[0]));
                         break;
                     case LABEL:
                         break;
                     case SWITCH:
                         for (int i = 0; i<e.getKeys().length;i++){
-                            if (t.getValue(e.getKeys()[i]).equalsIgnoreCase("yes")){
+                            if (t.getStringValue(e.getKeys()[i]).equalsIgnoreCase("yes")){
                                 records.add(1 + teamSet.getInt(e.getColumnValues()[i*2]));
                                 records.add(teamSet.getInt(e.getColumnValues()[i*2+1]));
                             } else {
@@ -135,7 +127,7 @@ public class SqlWriter {
                     case SPACE:
                         break;
                     case SLIDER:
-                        records.add(Double.parseDouble(t.getValue(e.getKeys()[0])) + teamSet.getDouble(e.getColumnValues()[0]));
+                        records.add(t.getDoubleValue(e.getKeys()[0]) + teamSet.getDouble(e.getColumnValues()[0]));
                         break;
                 }
             }
@@ -149,7 +141,7 @@ public class SqlWriter {
 
             records.add(total);
 
-            SqlUtil.updateTeamRecord(c,TABLE_NAME, records.toArray(new Object[records.size()]),t.getValue("team_num"));
+            SqlUtil.updateTeamRecord(c,TABLE_NAME, records.toArray(new Object[records.size()]),t.getStringValue("team_num"));
 
         } catch (SQLException e) {
             e.printStackTrace();
@@ -158,10 +150,10 @@ public class SqlWriter {
 
     private static void addNewTeam(Team t) {
         ArrayList<Object> records = new ArrayList<>();
-        records.add(Integer.parseInt(t.getValue("team_num")));
+        records.add(t.getIntValue("team_num"));
         records.add(t.getValue("team_color"));
         records.add(1);
-        Integer[] matchNums = {Integer.parseInt(t.getValue("match_num"))};
+        Integer[] matchNums = {t.getIntValue("match_num")};
         records.add(matchNums);
         for(Element e: Main.getElements()){
             switch (e.getType()){
@@ -170,7 +162,7 @@ public class SqlWriter {
                     for (String value: e.getArguments()){
                         if (e.getKeys()[0].equals("human_uses_gestures")){
                         }
-                        if (t.getValue(e.getKeys()[0]).equalsIgnoreCase(value)){
+                        if (t.getStringValue(e.getKeys()[0]).equalsIgnoreCase(value)){
                             records.add(1);
                         } else {
                             records.add(0);
@@ -179,21 +171,17 @@ public class SqlWriter {
                     break;
                 case TEXTFIELD:
                     if (e.getArguments()[0].equalsIgnoreCase("number") || e.getArguments()[0].equalsIgnoreCase("decimal")){
-                        try {
-                            records.add(Integer.parseInt(t.getValue(e.getKeys()[0])));
-                        } catch (NumberFormatException e1){
-                            records.add(Double.parseDouble(t.getValue(e.getKeys()[0])));
-                        }
+                            records.add(t.getNumberValue(e.getKeys()[0]));
                     }
                     break;
                 case STEPPER:
-                    records.add(Integer.parseInt(t.getValue(e.getKeys()[0])));
+                    records.add(t.getIntValue(e.getKeys()[0]));
                     break;
                 case LABEL:
                     break;
                 case SWITCH:
                     for (String key: e.getKeys()){
-                        if (t.getValue(key).equalsIgnoreCase("yes")){
+                        if (t.getStringValue(key).equalsIgnoreCase("yes")){
                             records.add(1);
                             records.add(0);
                         } else {
@@ -205,7 +193,7 @@ public class SqlWriter {
                 case SPACE:
                     break;
                 case SLIDER:
-                    records.add(Double.parseDouble(t.getValue(e.getKeys()[0])));
+                    records.add(t.getDoubleValue(e.getKeys()[0]));
                     break;
             }
         }

@@ -1,5 +1,6 @@
 package org.fullmetalfalcons.scouting.fileio;
 
+import org.apache.poi.hsmf.datatypes.PropertyValue;
 import org.apache.poi.hssf.util.HSSFColor;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.ss.util.CellRangeAddress;
@@ -106,41 +107,34 @@ public class Writer {
         Row r;
         //For all team data in TEAMS
         for (Team t: Main.getTeams()){
-            Main.debug("Adding data for team " + t.getValue(Team.NUMBER_KEY));
+            Main.debug("Adding data for team " + t.getStringValue(Team.NUMBER_KEY));
             //Create a row
             r = s.createRow(rowNum);
 
             //These first few sections are for keys which are constants: Team Number, Match Number, Alliance Color
             c = r.createCell(0);
             //Get value associated with key
-            String value = t.getValue(Team.NUMBER_KEY);
-            try {
-                //Assume Team Number is an int, catch the error if it isn't
-                c.setCellValue(Integer.parseInt(value));
-                //Shhhhhhhhhhhhh
-                if (value.hashCode()==1601763) {
-                    c.setCellStyle(superSecretSpecialStyle);
-                }
-            } catch (NumberFormatException e1){
-                Main.sendError(value + " is not a team number! (You should be proud of getting this error)",false);
+            //Assume Team Number is an int, catch the error if it isn't
+            int teamNum = t.getIntValue(Team.NUMBER_KEY);
+            c.setCellValue(teamNum);
+            //Shhhhhhhhhhhhh
+            if (teamNum == 4557) {
+                c.setCellStyle(superSecretSpecialStyle);
             }
 
             //See above
             c = r.createCell(1);
-            value = t.getValue(Team.MATCH_KEY);
-            try {
+            int matchNum = t.getIntValue(Team.MATCH_KEY);
 
-                c.setCellValue(Integer.parseInt(value));
-            } catch (NumberFormatException e1){
-                Main.sendError(value + " is not a match number! (You should be proud of getting this error)",false);
-            }
+            c.setCellValue(matchNum);
+
 
             //See above
             c = r.createCell(2);
-            value = t.getValue(Team.COLOR_KEY);
-            c.setCellValue(value);
+            String color = t.getStringValue(Team.COLOR_KEY);
+            c.setCellValue(color);
             //Set color of text to be the same as alliance color
-            if (value.equalsIgnoreCase("red")){
+            if (color.equalsIgnoreCase("red")){
                 c.setCellStyle(redStyle);
             } else {
                 c.setCellStyle(blueStyle);
@@ -157,20 +151,15 @@ public class Writer {
                         //Create a new cell
                         c = r.createCell(columnNum);
 
-                        try{
-                            //Assume value is an integer
-                            c.setCellValue(Integer.parseInt(t.getValue(key)));
-                        } catch (NumberFormatException e1){
-                            try {
-                                //If it fails, assume value is a double
-                                c.setCellValue(Double.parseDouble(t.getValue(key)));
-                            } catch (NumberFormatException e2){
-                                //Finally, default to String
-                                c.setCellValue(t.getValue(key));
-                            }
-                        } catch (NullPointerException e1){
-                            Main.sendError("Plist is missing key \"" + key + ",\" which is impressive.",false);
-                            c.setCellValue("MISSING VALUE");
+                        Object value = t.getValue(key);
+
+                        if (value instanceof String){
+                            c.setCellValue(t.getStringValue(key));
+                        } else if (value instanceof Integer){
+                            c.setCellValue(t.getIntValue(key));
+                        } else if (value instanceof Double){
+                            c.setCellValue(t.getDoubleValue(key));
+
                         }
                         //If at the end of a section, add a border on the right
                         if (endColumns.contains(columnNum)){

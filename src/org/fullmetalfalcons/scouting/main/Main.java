@@ -202,9 +202,10 @@ public class Main {
      * Adds it to TEAMS ArrayList
      *
      * @param dictionary Holds the key/value pairs for the team
+     * @param name
      */
-    public static void addTeam(NSDictionary dictionary){
-        Team t = new Team(dictionary);
+    public static void addTeam(NSDictionary dictionary, String name){
+        Team t = new Team(dictionary, name);
         debug("Team " + t.getValue(Team.NUMBER_KEY) + " loaded");
         TEAMS.add(t);
     }

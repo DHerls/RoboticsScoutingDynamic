@@ -77,7 +77,7 @@ public class Reader {
                 Main.debug("Discovered " + rootDict.size() + " key/value pairs");
 
                 //If it successfully creates an NSDictionary, it passes it to a Team object
-                Main.addTeam(rootDict);
+                Main.addTeam(rootDict, f.getName());
             } catch (IOException | PropertyListFormatException | ParserConfigurationException | ParseException | SAXException e) {
                 Main.sendError("An error has occurred with one of the plists: " + f.getName() + "\n" + e.getLocalizedMessage(),false);
             } catch (IllegalArgumentException | IndexOutOfBoundsException e){

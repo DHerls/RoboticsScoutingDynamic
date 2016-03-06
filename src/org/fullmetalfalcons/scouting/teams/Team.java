@@ -14,12 +14,14 @@ public class Team {
     public static final String MATCH_KEY = "match_num";
     public static final String COLOR_KEY = "team_color";
     public static final String NUMBER_KEY = "team_num";
+    private String fileName;
 
     private final NSDictionary dictionary;
 
 
-    public Team(NSDictionary dictionary){
+    public Team(NSDictionary dictionary, String fileName){
         this.dictionary = dictionary;
+        this.fileName = fileName;
     }
 
     /**
@@ -29,7 +31,7 @@ public class Team {
      * @return The value associated with the key in String form
      * @throws NullPointerException
      */
-    public String getValue(String key) throws NullPointerException{
+    public String getStringValue(String key){
         try {
 
             return dictionary.get(key).toJavaObject().toString().trim();
@@ -37,11 +39,95 @@ public class Team {
 
         } catch (NullPointerException e){
             Main.log(key);
-            Main.sendError("Config file does not match plists",true);
+            Main.sendError(String.format("File %s is missing key %s, defaulting to 0",fileName,key),true);
             return "";
 
         }
 
 
     }
+
+    public int getIntValue(String key){
+        try {
+
+            return Integer.parseInt(dictionary.get(key).toJavaObject().toString().trim());
+
+
+        } catch (NullPointerException e){
+            Main.sendError(String.format("File %s is missing key %s, defaulting to 0",fileName,key),false);
+            return 0;
+        }catch (NumberFormatException e){
+            //Main.sendError(String.format("Key %s in file %s is not an Integer",key,fileName),false);
+
+        }
+
+        return 0;
+
+
+    }
+
+    public double getDoubleValue(String key){
+        try {
+
+            return Double.parseDouble(dictionary.get(key).toJavaObject().toString().trim());
+
+
+        } catch (NullPointerException e){
+            Main.sendError(String.format("File %s is missing key %s, defaulting to 0",fileName,key),false);
+            return 0.0;
+        }catch (NumberFormatException e){
+            //Main.sendError(String.format("Key %s in file %s is not an Integer",key,fileName),false);
+            return 0.0;
+        }
+
+
+    }
+
+    public Number getNumberValue(String key){
+        try {
+
+            return Double.parseDouble(dictionary.get(key).toJavaObject().toString().trim());
+
+
+        } catch (NullPointerException e){
+            Main.sendError(String.format("File %s is missing key %s, defaulting to 0",fileName,key),false);
+            return 0.0;
+
+        } catch (NumberFormatException e){
+            try {
+                return Integer.parseInt(dictionary.get(key).toJavaObject().toString().trim());
+            } catch (NumberFormatException e1){
+                //Main.sendError(String.format("Key %s in file %s is not a number",key,fileName),false);
+                return 0.0;
+            }
+        }
+
+
+    }
+
+    public Object getValue(String key){
+        try {
+
+            return Double.parseDouble(dictionary.get(key).toJavaObject().toString().trim());
+
+
+        } catch (NullPointerException e){
+            Main.sendError(String.format("File %s is missing key %s, defaulting to 0",fileName,key),false);
+            return 0.0;
+
+        } catch (NumberFormatException e){
+            try {
+                return Integer.parseInt(dictionary.get(key).toJavaObject().toString().trim());
+            } catch (NumberFormatException e1){
+                return dictionary.get(key).toJavaObject().toString().trim();
+            }
+        }
+
+
+    }
+
+    public String getFileName() {
+        return fileName;
+    }
+
 }
