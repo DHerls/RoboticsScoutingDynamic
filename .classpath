@@ -15,5 +15,6 @@
 	<classpathentry kind="lib" path="lib/dd-plist.jar"/>
 	<classpathentry kind="lib" path="lib/expr.jar"/>
 	<classpathentry kind="lib" path="lib/sqlite-jdbc-3.8.11.2.jar" sourcepath="lib/sqlite-jdbc-3.8.11.2.jar"/>
+	<classpathentry kind="lib" path="lib/mysql-connector-java-5.1.38-bin.jar"/>
 	<classpathentry kind="output" path="out/production/RoboticsScoutingExcel"/>
 </classpath>

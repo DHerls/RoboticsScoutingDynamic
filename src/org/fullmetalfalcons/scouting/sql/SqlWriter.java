@@ -221,4 +221,42 @@ public class SqlWriter {
 
         SqlUtil.addColumn(c,TABLE_NAME,"grand_total",SqlType.DECIMAL);
     }
+
+    public static void writeRemote(String teamNum, String password) {
+        try {
+            String baseUsername = "ridget35_";
+            String urlBase = "jdbc:mysql://ridgetopclub.com:3306/";
+            String username = baseUsername + teamNum;
+
+            Class.forName("com.mysql.jdbc.Driver").newInstance();
+            c = DriverManager.getConnection(urlBase + username, username, password );
+
+            DatabaseMetaData meta = c.getMetaData();
+            ResultSet res = meta.getTables(null, null, TABLE_NAME,
+                    new String[]{"TABLE"});
+
+
+            if (!res.next() || res.getString("TABLE_NAME") == null) {
+                Main.log("Table doesn't exist, creating one");
+                SqlUtil.createTable(c, TABLE_NAME, "team_num");
+                SqlUtil.addColumn(c, TABLE_NAME, "team_color", SqlType.STRING, false);
+                SqlUtil.addColumn(c, TABLE_NAME, "num_matches", SqlType.INTEGER, false);
+                SqlUtil.addColumn(c, TABLE_NAME, "match_nums", SqlType.STRING, true);
+                addElementColumns();
+            } else {
+                Main.log("Table " + TABLE_NAME + " exists");
+            }
+
+            updateRecords();
+
+            c.close();
+
+        } catch (ClassNotFoundException | SQLException e) {
+            e.printStackTrace();
+        } catch (InstantiationException e) {
+            e.printStackTrace();
+        } catch (IllegalAccessException e) {
+            e.printStackTrace();
+        }
+    }
 }

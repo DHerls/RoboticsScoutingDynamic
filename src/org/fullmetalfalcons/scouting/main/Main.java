@@ -60,68 +60,88 @@ public class Main {
                 sendError("You have not provided a location for plists or config file", true);
             }
 
-            String plistsLocation = "";
-            String configLocation = "";
-            String excelLocation = "";
-            String SqlLocation = "";
-            boolean writeExcel = true;
+            if (!args[0].equalsIgnoreCase("remote")) {
+                String plistsLocation = "";
+                String configLocation = "";
+                String excelLocation = "";
+                String SqlLocation = "";
+                boolean writeExcel = true;
 
-            switch (args.length){
-                default:
+                switch (args.length){
+                    default:
 
-                case 5:
-                    excelLocation = args[4];
-    //                    sendError("Argument 4: " + excelLocation,false);
-                case 4:
-                    writeExcel = Boolean.parseBoolean(args[3]);
-    //                    sendError("Argument 3: " + writeExcel,false);
-                case 3:
-                    SqlLocation = args[2];
-                case 2:
-                    configLocation = args[0];
-                    plistsLocation = args[1];
-    //                    sendError("Argument 2: " + plistsLocation,false);
+                    case 5:
+                        excelLocation = args[4];
+        //                    sendError("Argument 4: " + excelLocation,false);
+                    case 4:
+                        writeExcel = Boolean.parseBoolean(args[3]);
+        //                    sendError("Argument 3: " + writeExcel,false);
+                    case 3:
+                        SqlLocation = args[2];
+                    case 2:
+                        configLocation = args[0];
+                        plistsLocation = args[1];
+        //                    sendError("Argument 2: " + plistsLocation,false);
 
-    //                    sendError("Argument 1: " + configLocation,false);
+        //                    sendError("Argument 1: " + configLocation,false);
 
-                break;
+                    break;
+                }
+                log("Program Starting");
+                log("Starting to load configuration");
+                //Populates ELEMENTS ArrayList from configuration file
+                Reader.loadConfig(configLocation);
 
+                if(ELEMENTS.size()==0){
+                    sendError("No Elements found in config file",true);
+                }
+
+                log(ELEMENTS.size() + " elements loaded");
+
+                log("Starting to load plists");
+
+                //Populates TEAMS ArrayList from plist files, passes location of plists
+                Reader.loadPlists(plistsLocation);
+
+                log(TEAMS.size() + " teams loaded");
+
+                TEAM_NAMES = Reader.loadTeamNames();
+
+                SqlWriter.write(SqlLocation);
+
+                if (writeExcel){
+                    log("Starting to write file");
+
+                    //Writes data to Excel spreadsheet
+                    Writer.write(excelLocation);
+                    //Asks user if they would like to open the Excel workbook
+                    exitDialogue();
+                }
+            } else {
+                String configLocation = args[1];
+                String plistLocation = args[2];
+                String teamNum = args[3];
+                String password = args[4];
+
+                log("Program Starting");
+                log("Starting to load configuration");
+                //Populates ELEMENTS ArrayList from configuration file
+                Reader.loadConfig(configLocation);
+
+                if(ELEMENTS.size()==0){
+                    sendError("No Elements found in config file",true);
+                }
+
+                log(ELEMENTS.size() + " elements loaded");
+
+                log("Starting to load plists");
+
+                //Populates TEAMS ArrayList from plist files, passes location of plists
+                Reader.loadPlists(plistLocation);
+
+                log(TEAMS.size() + " teams loaded");
+                SqlWriter.writeRemote(teamNum,password);
             }
-
-            log("Program Starting");
-            log("Starting to load configuration");
-
-
-
-            //Populates ELEMENTS ArrayList from configuration file
-            Reader.loadConfig(configLocation);
-
-            if(ELEMENTS.size()==0){
-                sendError("No Elements found in config file",true);
-            }
-
-            log(ELEMENTS.size() + " elements loaded");
-
-            log("Starting to load plists");
-
-            //Populates TEAMS ArrayList from plist files, passes location of plists
-            Reader.loadPlists(plistsLocation);
-
-            log(TEAMS.size() + " teams loaded");
-
-            TEAM_NAMES = Reader.loadTeamNames();
-
-            SqlWriter.write(SqlLocation);
-
-            if (writeExcel){
-                log("Starting to write file");
-
-                //Writes data to Excel spreadsheet
-                Writer.write(excelLocation);
-                //Asks user if they would like to open the Excel workbook
-                exitDialogue();
-            }
-
 
 
             log("Exiting program");

@@ -44,4 +44,7 @@
 		<relative-module-src project-related="jar://$PROJECT_DIR$/lib/sqlite-jdbc-3.8.11.2.jar!/"/>
 		<relative-module-cls project-related="jar://$PROJECT_DIR$/lib/sqlite-jdbc-3.8.11.2.jar!/"/>
 	</lib>
+	<lib name="mysql-connector-java-5.1.38-bin.jar" scope="COMPILE">
+		<relative-module-cls project-related="jar://$PROJECT_DIR$/lib/mysql-connector-java-5.1.38-bin.jar!/"/>
+	</lib>
 </component>
