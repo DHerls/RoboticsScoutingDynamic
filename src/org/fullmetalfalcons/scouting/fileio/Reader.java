@@ -9,6 +9,7 @@ import org.xml.sax.SAXException;
 import javax.xml.parsers.ParserConfigurationException;
 import java.io.*;
 import java.text.ParseException;
+import java.util.HashMap;
 
 /**
  * Reads and imports data from the config file and plists
@@ -85,4 +86,25 @@ public class Reader {
             }
         }
     }
+
+    public static HashMap<Integer, String> loadTeamNames(){
+        try (InputStream is = Main.class.getResourceAsStream("/org/fullmetalfalcons/scouting/resources/teams.txt");
+             InputStreamReader isr = new InputStreamReader(is);
+             BufferedReader br = new BufferedReader(isr)){
+
+            HashMap<Integer,String> teamMap = new HashMap<>();
+            String line;
+            String[] split;
+            int i;
+            while ((line=br.readLine())!=null){
+                i = line.indexOf(",");
+                teamMap.put(Integer.parseInt(line.substring(0,i)),line.substring(i+1));
+            }
+            return teamMap;
+    } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
 }

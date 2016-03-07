@@ -122,15 +122,18 @@ public class Writer {
                 c.setCellStyle(superSecretSpecialStyle);
             }
 
-            //See above
             c = r.createCell(1);
+            c.setCellValue(Main.getTeamName(teamNum));
+
+            //See above
+            c = r.createCell(2);
             int matchNum = t.getIntValue(Team.MATCH_KEY);
 
             c.setCellValue(matchNum);
 
 
             //See above
-            c = r.createCell(2);
+            c = r.createCell(3);
             String color = t.getStringValue(Team.COLOR_KEY);
             c.setCellValue(color);
             //Set color of text to be the same as alliance color
@@ -141,7 +144,7 @@ public class Writer {
             }
 
             //Start in the column after the General Info
-            int columnNum = 3;
+            int columnNum = 4;
             //For every element
             for (Element e: Main.getElements()){
                 //Labels don't have values, so ignore them
@@ -303,13 +306,18 @@ public class Writer {
         c.setCellValue("Team Number");
         c.setCellStyle(headerStyle);
 
-        //Add Match Number to second cell
+        //Add Team Number to first cell
         c=bottomRow.createCell(1);
+        c.setCellValue("Team Name");
+        c.setCellStyle(headerStyle);
+
+        //Add Match Number to second cell
+        c=bottomRow.createCell(2);
         c.setCellValue("Match Number");
         c.setCellStyle(headerStyle);
 
         //Add Alliance Color to third cell
-        c=bottomRow.createCell(2);
+        c=bottomRow.createCell(3);
         c.setCellValue("Alliance Color");
         c.setCellStyle(headerStyle);
 
@@ -319,12 +327,12 @@ public class Writer {
         c.setCellStyle(categoryStyle);
 
         //Merge the region above the first three cells
-        s.addMergedRegion(new CellRangeAddress(0,0,0,2));
+        s.addMergedRegion(new CellRangeAddress(0,0,0,3));
 
         //Keep track of where the section (i.e. Human, Teleop, Automomous) begins
-        int sectionStart = 3;
+        int sectionStart = 4;
         //Keep track of where the program is working
-        int headerPosition = 3;
+        int headerPosition = 4;
 
         //For every Element
         for (Element e: Main.getElements()){
@@ -338,7 +346,7 @@ public class Writer {
                         c.setCellValue(e.getDescriptions()[0]);
                         c.setCellStyle(categoryStyle);
                         //After the first category
-                        if (headerPosition!=3){
+                        if (headerPosition!=4){
                             //Merge everything since the last category
                             s.addMergedRegion(new CellRangeAddress(0,0,sectionStart,headerPosition-1));
                             //List of where the sections end so that borders can be added

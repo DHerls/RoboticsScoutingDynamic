@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Random;
 
 import javax.swing.JOptionPane;
@@ -41,6 +42,7 @@ public class Main {
     private static final ArrayList<Element> ELEMENTS = new ArrayList<>();
     private static final ArrayList<Team> TEAMS = new ArrayList<>();
     private static final ArrayList<Equation> EQUATIONS = new ArrayList<>();
+    private static HashMap<Integer,String> TEAM_NAMES;
     //Console spam
     private static final boolean DEBUG = false;
 
@@ -107,7 +109,7 @@ public class Main {
 
             log(TEAMS.size() + " teams loaded");
 
-
+            TEAM_NAMES = Reader.loadTeamNames();
 
             SqlWriter.write(SqlLocation);
 
@@ -300,5 +302,14 @@ public class Main {
      */
     public static ArrayList<Equation> getEquations() {
         return EQUATIONS;
+    }
+
+    public static String getTeamName(int teamNum) {
+        try {
+            return TEAM_NAMES.get(teamNum);
+        }catch (NullPointerException e){
+
+        }
+        return "MISSING NAME";
     }
 }
