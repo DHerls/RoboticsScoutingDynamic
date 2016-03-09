@@ -96,15 +96,20 @@ public class Reader {
             String line;
             String[] split;
             int i;
+
             while ((line=br.readLine())!=null){
                 i = line.indexOf(",");
-                teamMap.put(Integer.parseInt(line.substring(0,i)),line.substring(i+1));
+                try {
+                    teamMap.put(Integer.parseInt(line.substring(0, i)), line.substring(i + 1));
+                } catch (NumberFormatException e){
+                    //Doesn't really affect the program, just don't want the error to pop up
+                }
             }
             return teamMap;
-    } catch (IOException e) {
-            e.printStackTrace();
+        } catch (IOException e) {
+            Main.sendError("Error loading team Names", false);
         }
-        return null;
+        return new HashMap<Integer, String>();
     }
 
 }

@@ -74,6 +74,7 @@ public class Main {
                         excelLocation = args[4];
         //                    sendError("Argument 4: " + excelLocation,false);
                     case 4:
+
                         writeExcel = Boolean.parseBoolean(args[3]);
         //                    sendError("Argument 3: " + writeExcel,false);
                     case 3:
