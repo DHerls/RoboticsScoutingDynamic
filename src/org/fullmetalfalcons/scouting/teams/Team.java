@@ -14,7 +14,7 @@ public class Team {
     public static final String MATCH_KEY = "match_num";
     public static final String COLOR_KEY = "team_color";
     public static final String NUMBER_KEY = "team_num";
-    private String fileName;
+    private final String fileName;
 
     private final NSDictionary dictionary;
 
@@ -57,7 +57,7 @@ public class Team {
             Main.sendError(String.format("File %s is missing key %s, defaulting to 0",fileName,key),false);
             return 0;
         }catch (NumberFormatException e){
-            //Main.sendError(String.format("Key %s in file %s is not an Integer",key,fileName),false);
+            Main.sendError(String.format("Key %s in file %s is not an Integer",key,fileName),false);
 
         }
 
@@ -76,7 +76,7 @@ public class Team {
             Main.sendError(String.format("File %s is missing key %s, defaulting to 0",fileName,key),false);
             return 0.0;
         }catch (NumberFormatException e){
-            //Main.sendError(String.format("Key %s in file %s is not an Integer",key,fileName),false);
+            Main.sendError(String.format("Key %s in file %s is not an Integer",key,fileName),false);
             return 0.0;
         }
 
@@ -97,7 +97,7 @@ public class Team {
             try {
                 return Integer.parseInt(dictionary.get(key).toJavaObject().toString().trim());
             } catch (NumberFormatException e1){
-                //Main.sendError(String.format("Key %s in file %s is not a number",key,fileName),false);
+                Main.sendError(String.format("Key %s in file %s is not a number",key,fileName),false);
                 return 0.0;
             }
         }
