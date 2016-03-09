@@ -14,7 +14,7 @@ public class Team {
     public static final String MATCH_KEY = "match_num";
     public static final String COLOR_KEY = "team_color";
     public static final String NUMBER_KEY = "team_num";
-    private String fileName;
+    private final String fileName;
 
     private final NSDictionary dictionary;
 

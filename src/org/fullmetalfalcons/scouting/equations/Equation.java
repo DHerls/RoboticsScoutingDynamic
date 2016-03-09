@@ -184,7 +184,7 @@ public class Equation {
 
     }
 
-    public double round(double value, int numberOfDigitsAfterDecimalPoint) {
+    private double round(double value, @SuppressWarnings("SameParameterValue") int numberOfDigitsAfterDecimalPoint) {
         BigDecimal bigDecimal = new BigDecimal(value);
         bigDecimal = bigDecimal.setScale(numberOfDigitsAfterDecimalPoint,
                 BigDecimal.ROUND_HALF_UP);

@@ -21,8 +21,14 @@ public class SqlWriter {
     private static final String DATABASE_NAME = "scouting.db";
     private static final String TABLE_NAME = "team_data";
 
+    /**
+     * Writes the current team data to an SQLite database at the location specified
+     * @param sqlLocation Folder to write the database in
+     */
+
     public static void write(String sqlLocation) {
         try {
+            //Driver to read SQLite databaes
             Class.forName("org.sqlite.JDBC");
             File file = new File((sqlLocation.isEmpty()? sqlLocation: sqlLocation.charAt(sqlLocation.length()-1)=='/'?sqlLocation:sqlLocation+"/") + DATABASE_NAME);
             if (file.getParentFile() != null) {
@@ -31,17 +37,20 @@ public class SqlWriter {
             }
             //noinspection ResultOfMethodCallIgnored
             file.createNewFile();
+            //Open the database for read/write
             c = DriverManager.getConnection("jdbc:sqlite:" + file.getAbsolutePath());
 
+            //Get database metadata
             DatabaseMetaData meta = c.getMetaData();
             ResultSet res = meta.getTables(null, null, TABLE_NAME,
                     new String[]{"TABLE"});
 
-
+            //If there are no tables in the database
             if (!res.next() || res.getString("TABLE_NAME") == null) {
+                //Create table with a bunch of blank columns
                 Main.log("Table doesn't exist, creating one");
-                SqlUtil.createTable(c, TABLE_NAME, "team_num");
-                SqlUtil.addColumn(c, TABLE_NAME, "team_color", SqlType.STRING, false);
+                SqlUtil.createTable(c, TABLE_NAME, Team.NUMBER_KEY);
+                SqlUtil.addColumn(c, TABLE_NAME, Team.COLOR_KEY, SqlType.STRING, false);
                 SqlUtil.addColumn(c, TABLE_NAME, "num_matches", SqlType.INTEGER, false);
                 SqlUtil.addColumn(c, TABLE_NAME, "match_nums", SqlType.STRING, true);
                 addElementColumns();
@@ -53,18 +62,26 @@ public class SqlWriter {
 
             c.close();
 
-        } catch (ClassNotFoundException | SQLException e) {
-            e.printStackTrace();
+        } catch (ClassNotFoundException e) {
+            Main.sendError("Cannot find driver to read database", false);
+        } catch (SQLException e) {
+            Main.sendError("Error getting data from database", false);
         } catch (IOException e) {
-            e.printStackTrace();
+            Main.sendError("Cannot find database specified", false);
         }
     }
 
+    /**
+     * Put team data in the database
+     */
     private static void updateRecords() {
         for (Team t: Main.getTeams()){
-            if (SqlUtil.doesTeamRecordExist(c,TABLE_NAME,t.getIntValue("team_num"))){
+            //If the team already exists
+            if (SqlUtil.doesTeamRecordExist(c,TABLE_NAME,t.getIntValue(Team.NUMBER_KEY))){
+                //Update team record
                 updateTeamRecord(t);
             } else {
+                //Create a new row in database
                 addNewTeam(t);
 
             }
@@ -72,21 +89,28 @@ public class SqlWriter {
 
     }
 
+    /**
+     * Called if a team exists and new data is to be added
+     *
+     * @param t The team to be added
+     */
     private static void updateTeamRecord(Team t) {
         ArrayList<Object> records = new ArrayList<>();
-        ResultSet teamSet = SqlUtil.getTeamRecord(c, TABLE_NAME, t.getIntValue("team_num"));
+        //Get existing team data
+        ResultSet teamSet = SqlUtil.getTeamRecord(c, TABLE_NAME, t.getIntValue(Team.NUMBER_KEY));
         try {
             ArrayList<String> matches = new ArrayList<>(Arrays.asList(SqlUtil.getArrayFromString(teamSet.getString("match_nums"))));
             for (String m: matches) {
-                if (t.getValue("match_num").equals(m)) {
+                //If the match number already exists
+                if (t.getValue(Team.MATCH_KEY).equals(m)) {
                     return;
                 }
             }
 
-            records.add(t.getIntValue("team_num"));
-            records.add(t.getValue("team_color"));
+            records.add(t.getIntValue(Team.NUMBER_KEY));
+            records.add(t.getValue(Team.COLOR_KEY));
             records.add(1+teamSet.getInt("num_matches"));
-            matches.add(t.getStringValue("match_num"));
+            matches.add(t.getStringValue(Team.MATCH_KEY));
             records.add(matches.toArray(new String[matches.size()]));
             for(Element e: Main.getElements()){
                 switch (e.getType()){
@@ -141,19 +165,21 @@ public class SqlWriter {
 
             records.add(total);
 
-            SqlUtil.updateTeamRecord(c,TABLE_NAME, records.toArray(new Object[records.size()]),t.getStringValue("team_num"));
+            SqlUtil.updateTeamRecord(c,TABLE_NAME, records.toArray(new Object[records.size()]),t.getStringValue(Team.NUMBER_KEY));
 
         } catch (SQLException e) {
             e.printStackTrace();
+        } catch (NullPointerException e){
+            Main.sendError("Cannot read team data for team " + t.getValue(Team.NUMBER_KEY),false);
         }
     }
 
     private static void addNewTeam(Team t) {
         ArrayList<Object> records = new ArrayList<>();
-        records.add(t.getIntValue("team_num"));
-        records.add(t.getValue("team_color"));
+        records.add(t.getIntValue(Team.NUMBER_KEY));
+        records.add(t.getValue(Team.COLOR_KEY));
         records.add(1);
-        Integer[] matchNums = {t.getIntValue("match_num")};
+        Integer[] matchNums = {t.getIntValue(Team.MATCH_KEY)};
         records.add(matchNums);
         for(Element e: Main.getElements()){
             switch (e.getType()){
@@ -238,8 +264,8 @@ public class SqlWriter {
 
             if (!res.next() || res.getString("TABLE_NAME") == null) {
                 Main.log("Table doesn't exist, creating one");
-                SqlUtil.createTable(c, TABLE_NAME, "team_num");
-                SqlUtil.addColumn(c, TABLE_NAME, "team_color", SqlType.STRING, false);
+                SqlUtil.createTable(c, TABLE_NAME, Team.NUMBER_KEY);
+                SqlUtil.addColumn(c, TABLE_NAME, Team.COLOR_KEY, SqlType.STRING, false);
                 SqlUtil.addColumn(c, TABLE_NAME, "num_matches", SqlType.INTEGER, false);
                 SqlUtil.addColumn(c, TABLE_NAME, "match_nums", SqlType.STRING, true);
                 addElementColumns();

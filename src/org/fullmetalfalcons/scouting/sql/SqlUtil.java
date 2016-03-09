@@ -9,9 +9,10 @@ import java.util.Iterator;
  * Created by Dan on 2/17/2016.
  */
 @SuppressWarnings("SameParameterValue")
-public class SqlUtil {
+class SqlUtil {
 
-    public static boolean addColumn(Connection c,String tableName, String columnName, SqlType type){
+    @SuppressWarnings("UnusedReturnValue")
+    public static boolean addColumn(Connection c, String tableName, String columnName, SqlType type){
         return addColumn(c,tableName,columnName,type,0,true);
     }
 
@@ -19,11 +20,13 @@ public class SqlUtil {
         return addColumn(c,tableName,columnName,type,length,true);
     }
 
-    public static boolean addColumn(Connection c,String tableName, String columnName, SqlType type, boolean canBeNull){
+    @SuppressWarnings("UnusedReturnValue")
+    public static boolean addColumn(Connection c, String tableName, String columnName, SqlType type, boolean canBeNull){
         return addColumn(c,tableName,columnName,type,0,canBeNull);
     }
 
-    public static boolean addColumn(Connection c,String tableName, String columnName, SqlType type, int length, boolean canBeNull){
+    @SuppressWarnings("WeakerAccess")
+    public static boolean addColumn(Connection c, String tableName, String columnName, SqlType type, int length, boolean canBeNull){
         try {
             Statement statement = c.createStatement();
             String sql = "ALTER TABLE " + tableName +
