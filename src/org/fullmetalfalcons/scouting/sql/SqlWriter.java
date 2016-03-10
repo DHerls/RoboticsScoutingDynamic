@@ -18,6 +18,7 @@ import java.util.Arrays;
 public class SqlWriter {
 
     private static Connection c;
+    private static Connection remoteConnection;
     private static final String DATABASE_NAME = "scouting.db";
     private static final String TABLE_NAME = "team_data";
 
@@ -248,14 +249,13 @@ public class SqlWriter {
         SqlUtil.addColumn(c,TABLE_NAME,"grand_total",SqlType.DECIMAL);
     }
 
-    public static void writeRemote(String teamNum, String password) {
+    public static void writeRemote(String sqlLocation, String teamNum, String password) {
         try {
             String baseUsername = "ridget35_";
             String urlBase = "jdbc:mysql://ridgetopclub.com:3306/";
             String username = baseUsername + teamNum;
-
             Class.forName("com.mysql.jdbc.Driver").newInstance();
-            c = DriverManager.getConnection(urlBase + username, username, password );
+            remoteConnection = DriverManager.getConnection(urlBase + username, username, password );
 
             DatabaseMetaData meta = c.getMetaData();
             ResultSet res = meta.getTables(null, null, TABLE_NAME,
@@ -267,13 +267,17 @@ public class SqlWriter {
                 SqlUtil.createTable(c, TABLE_NAME, Team.NUMBER_KEY);
                 SqlUtil.addColumn(c, TABLE_NAME, Team.COLOR_KEY, SqlType.STRING, false);
                 SqlUtil.addColumn(c, TABLE_NAME, "num_matches", SqlType.INTEGER, false);
-                SqlUtil.addColumn(c, TABLE_NAME, "match_nums", SqlType.STRING, true);
                 addElementColumns();
             } else {
                 Main.log("Table " + TABLE_NAME + " exists");
             }
 
-            updateRecords();
+            //Driver to read SQLite databaes
+            Class.forName("org.sqlite.JDBC").newInstance();
+            File file = new File((sqlLocation.isEmpty()? sqlLocation: sqlLocation.charAt(sqlLocation.length()-1)=='/'?sqlLocation:sqlLocation+"/") + DATABASE_NAME);
+            c = DriverManager.getConnection("jdbc:sqlite:" + file.getAbsolutePath());
+
+            mergeDatabases();
 
             c.close();
 
@@ -282,6 +286,46 @@ public class SqlWriter {
         } catch (InstantiationException e) {
             e.printStackTrace();
         } catch (IllegalAccessException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private static void mergeDatabases() {
+        ResultSet local = SqlUtil.retrieveAll(c, TABLE_NAME);
+        try {
+            if (local!=null) {
+                while (local.next()) {
+                    if (SqlUtil.doesTeamRecordExist(remoteConnection,TABLE_NAME,Integer.parseInt(local.getString(Team.NUMBER_KEY)))){
+                        ResultSet remote = SqlUtil.getTeamRecord(remoteConnection,TABLE_NAME,Integer.parseInt(local.getString(Team.NUMBER_KEY)));
+                        DatabaseMetaData meta = remoteConnection.getMetaData();
+                        ResultSet columnNameSet = meta.getColumns(null,null,TABLE_NAME,null);
+                        ArrayList<Object> teamData = new ArrayList<>();
+                        String name;
+                        while (columnNameSet.next()){
+                            name = columnNameSet.getString("COLUMN_NAME");
+                            if (!name.equals(Team.NUMBER_KEY)){
+                                //TODO Fix it
+                            } else {
+                                teamData.add(local.getString(Team.NUMBER_KEY));
+                            }
+
+                        }
+                    } else {
+                        DatabaseMetaData meta = remoteConnection.getMetaData();
+                        ResultSet columnNameSet = meta.getColumns(null,null,TABLE_NAME,null);
+                        ArrayList<Object> teamData = new ArrayList<>();
+                        String name;
+                        while (columnNameSet.next()){
+                            name = columnNameSet.getString("COLUMN_NAME");
+                            teamData.add(local.getObject(name));
+                        }
+                        SqlUtil.addTeamRecord(remoteConnection,TABLE_NAME,teamData.toArray(new Object[teamData.size()]));
+                    }
+                }
+            } else {
+                Main.sendError("Local database is Empty!",true);
+            }
+        } catch (SQLException e) {
             e.printStackTrace();
         }
     }

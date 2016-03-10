@@ -119,29 +119,36 @@ public class Main {
                     exitDialogue();
                 }
             } else {
-                String configLocation = args[1];
-                String plistLocation = args[2];
-                String teamNum = args[3];
-                String password = args[4];
+                try {
+                    String configLocation = args[1];
+                    String plistLocation = args[2];
+                    String sqlLocation = args[3];
+                    String teamNum = args[4];
+                    String password = args[5];
 
-                log("Program Starting");
-                log("Starting to load configuration");
-                //Populates ELEMENTS ArrayList from configuration file
-                Reader.loadConfig(configLocation);
+                    log("Program Starting");
+                    log("Starting to load configuration");
+                    //Populates ELEMENTS ArrayList from configuration file
+                    Reader.loadConfig(configLocation);
 
-                if(ELEMENTS.size()==0){
-                    sendError("No Elements found in config file",true);
+                    if(ELEMENTS.size()==0){
+                        sendError("No Elements found in config file",true);
+                    }
+
+                    log(ELEMENTS.size() + " elements loaded");
+
+                    log("Starting to load plists");
+
+                    //Populates TEAMS ArrayList from plist files, passes location of plists
+                    Reader.loadPlists(plistLocation);
+
+                    log(TEAMS.size() + " teams loaded");
+                    SqlWriter.writeRemote(sqlLocation, teamNum,password);
+                } catch (ArrayIndexOutOfBoundsException e){
+                    sendError("Not enough arguments: config plists local-database team-num password",true);
                 }
 
-                log(ELEMENTS.size() + " elements loaded");
 
-                log("Starting to load plists");
-
-                //Populates TEAMS ArrayList from plist files, passes location of plists
-                Reader.loadPlists(plistLocation);
-
-                log(TEAMS.size() + " teams loaded");
-                SqlWriter.writeRemote(teamNum,password);
             }
 
 

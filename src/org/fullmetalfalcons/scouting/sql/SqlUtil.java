@@ -1,5 +1,7 @@
 package org.fullmetalfalcons.scouting.sql;
 
+import org.fullmetalfalcons.scouting.main.Main;
+
 import java.sql.*;
 import java.util.Arrays;
 import java.util.Iterator;
@@ -163,12 +165,13 @@ class SqlUtil {
         }
     }
 
-    public static ResultSet test (Connection c, String tableName){
+
+    public static ResultSet retrieveAll(Connection c, String tableName) {
         try {
             Statement s = c.createStatement();
-            return s.executeQuery("SELECT * FROM " + tableName + " WHERE human_uses_gestures_no * 1.0 / num_matches < .5");
+            return s.executeQuery("SELECT * FROM " + tableName);
         } catch (SQLException e) {
-            e.printStackTrace();
+            Main.sendError("Problem reading local database " + e.getMessage(), true);
         }
         return null;
     }
