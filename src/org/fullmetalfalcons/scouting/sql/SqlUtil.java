@@ -2,9 +2,12 @@ package org.fullmetalfalcons.scouting.sql;
 
 import org.fullmetalfalcons.scouting.main.Main;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.sql.*;
-import java.util.Arrays;
-import java.util.Iterator;
+import java.util.*;
 
 /**
  *
@@ -12,6 +15,8 @@ import java.util.Iterator;
  */
 @SuppressWarnings("SameParameterValue")
 class SqlUtil {
+
+    private static final HashMap<String, String> SQL_CODES = new HashMap<>();
 
     @SuppressWarnings("UnusedReturnValue")
     public static boolean addColumn(Connection c, String tableName, String columnName, SqlType type){
@@ -41,7 +46,7 @@ class SqlUtil {
             statement.close();
             return true;
         } catch (SQLException e) {
-            e.printStackTrace();
+            sendSqlError("Problem adding column",e);
             return false;
         }
 
@@ -54,7 +59,7 @@ class SqlUtil {
             statement.executeUpdate(sql);
             statement.close();
         } catch (SQLException e) {
-            e.printStackTrace();
+            sendSqlError("Problem creating table",e);
         }
     }
 
@@ -65,7 +70,7 @@ class SqlUtil {
             ResultSet rs = statement.executeQuery(sql);
             return rs.next();
         } catch (SQLException e) {
-            e.printStackTrace();
+            sendSqlError("Problem checking team record",e);
             return false;
         }
     }
@@ -101,7 +106,7 @@ class SqlUtil {
             statement.executeUpdate(sql);
             statement.close();
         } catch (SQLException e) {
-            e.printStackTrace();
+            sendSqlError("Problem adding team record", e);
         }
     }
 
@@ -121,7 +126,7 @@ class SqlUtil {
             Statement statement = c.createStatement();
             return statement.executeQuery("SELECT * FROM " + tableName + " WHERE team_num=" +team_num);
         } catch (SQLException e) {
-            e.printStackTrace();
+            sendSqlError("Problem retrieving team record",e);
             return null;
         }
     }
@@ -161,7 +166,7 @@ class SqlUtil {
             s.execute(base);
             s.close();
         } catch (SQLException e) {
-            e.printStackTrace();
+            sendSqlError("Problem updating team record", e);
         }
     }
 
@@ -171,8 +176,38 @@ class SqlUtil {
             Statement s = c.createStatement();
             return s.executeQuery("SELECT * FROM " + tableName);
         } catch (SQLException e) {
-            Main.sendError("Problem reading local database " + e.getMessage(), true);
+            sendSqlError("Problem reading database",e);
         }
         return null;
+    }
+
+    public static void clearData(Connection c, String tableName) {
+        try {
+            Statement s = c.createStatement();
+            s.execute("DROP TABLE " + tableName);
+        } catch (SQLException e) {
+            sendSqlError("Problem deleting local database",e);
+        }
+    }
+
+    public static void sendSqlError(String message, SQLException e){
+        if (SQL_CODES.isEmpty()) {
+            try (InputStream is = Main.class.getResourceAsStream("/org/fullmetalfalcons/scouting/resources/sqlcodes.txt");
+                 InputStreamReader isr = new InputStreamReader(is);
+                 BufferedReader br = new BufferedReader(isr)) {
+                String line;
+                int i;
+                while ((line = br.readLine()) != null) {
+                    i = line.indexOf(",");
+                    SQL_CODES.put(line.substring(0, i).trim(), line.substring(i + 1));
+                }
+
+
+            } catch (IOException e1) {
+                Main.sendError("Missing sytem critical files: sqlcodes.txt",true,e1);
+            }
+        }
+
+        Main.sendError(message + ": " + SQL_CODES.get(e.getSQLState()),false,e);
     }
 }

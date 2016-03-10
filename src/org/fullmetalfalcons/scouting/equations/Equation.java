@@ -90,7 +90,7 @@ public class Equation {
                                     equation = equation.replace(key,String.valueOf(t.getDoubleValue(key)));
                                 } catch(NumberFormatException e1){
                                     equation = equation.replace(key,"0");
-                                    Main.sendError("Textfield: " + key + " does not have a numeric value. You should not be seeing this error.",false);
+                                    Main.sendError("Textfield: " + key + " does not have a numeric value. You should not be seeing this error.",false,e1);
                                 }
                             }
                         }
@@ -105,7 +105,7 @@ public class Equation {
                             equation = equation.replace(key,String.valueOf(t.getIntValue(key)));
                         } catch(NumberFormatException e1){
                             equation = equation.replace(key,"0");
-                            Main.sendError(key + " does not have a numeric value. You should not be seeing this error.",false);
+                            Main.sendError(key + " does not have a numeric value. You should not be seeing this error.",false,e1);
                         }
                     }
                     break;
@@ -134,7 +134,7 @@ public class Equation {
                             equation = equation.replace(key, String.valueOf(t.getDoubleValue(key)));
                         } catch (NumberFormatException e1){
                             equation = equation.replace(key,"0");
-                            Main.sendError("Slider: " + key + " returned a non-numeric value.  You should not be seeing this error.",false);
+                            Main.sendError("Slider: " + key + " returned a non-numeric value.  You should not be seeing this error.",false,e1);
                         }
                     }
                     break;
@@ -147,7 +147,7 @@ public class Equation {
             //Calculate the value of the equation
             value = expr.value();
         } catch (SyntaxException e) {
-            Main.sendError("Equation " + name + " is formatted incorrectly",false);
+            Main.sendError("Equation " + name + " is formatted incorrectly",false,e);
         }
         return round(value,3);
     }

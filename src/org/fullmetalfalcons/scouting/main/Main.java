@@ -1,6 +1,6 @@
 package org.fullmetalfalcons.scouting.main;
 
-import java.awt.Desktop;
+import java.awt.*;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -9,7 +9,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Random;
 
-import javax.swing.JOptionPane;
+import javax.swing.*;
 
 import org.fullmetalfalcons.scouting.elements.Element;
 import org.fullmetalfalcons.scouting.equations.Equation;
@@ -53,7 +53,7 @@ public class Main {
         try {
 
             //Crash Test Dummy \/ \/ \/
-            //String a = args[5];
+            //String a = args[20];
 
             //Program needs to be told where to look for the plist files and config file
             if(args.length<2) {
@@ -145,7 +145,7 @@ public class Main {
                     log(TEAMS.size() + " teams loaded");
                     SqlWriter.writeRemote(sqlLocation, teamNum,password);
                 } catch (ArrayIndexOutOfBoundsException e){
-                    sendError("Not enough arguments: config plists local-database team-num password",true);
+                    sendError("Not enough arguments: config plists local-database team-num password",true,e);
                 }
 
 
@@ -174,12 +174,11 @@ public class Main {
                 }
 
                 Random rand = new Random();
-                sendError(lines.get(rand.nextInt(lines.size())) + ": " + e.toString(),true);
+                sendError(lines.get(rand.nextInt(lines.size())) + ": " + e.toString(),true,e);
 
             } catch (IOException e1) {
                 //If my ego for some strange reason gets too big, this is where we admit defeat
-                e1.printStackTrace();
-                sendError("We tried to be funny and we failed. Anyways, the program crashed: " + e.toString(),true);
+                sendError("We tried to be funny and we failed. Anyways, the program crashed: " + e.toString(),true,e1);
             }
 
         }
@@ -204,7 +203,7 @@ public class Main {
             try {
                 Desktop.getDesktop().open(Writer.getResultsFile());
             }catch (IllegalArgumentException e){
-                sendError("Congratulations! You managed damage/lose the results file in the time since it was made!",true);
+                sendError("Congratulations! You managed damage/lose the results file in the time since it was made!",true,e);
             }
         }
     }
@@ -223,7 +222,7 @@ public class Main {
             debug("Element of type " + e.getType().toString() + " created");
             ELEMENTS.add(e);
         } catch (ElementParseException e) {
-            sendError("Config error: " + e.getMessage(),false);
+            sendError("Config error: " + e.getMessage(),false,e);
         }
     }
 
@@ -232,10 +231,10 @@ public class Main {
      * Adds it to TEAMS ArrayList
      *
      * @param dictionary Holds the key/value pairs for the team
-     * @param name
+     * @param fileName Name of the team's file
      */
-    public static void addTeam(NSDictionary dictionary, String name){
-        Team t = new Team(dictionary, name);
+    public static void addTeam(NSDictionary dictionary, String fileName){
+        Team t = new Team(dictionary, fileName);
         debug("Team " + t.getValue(Team.NUMBER_KEY) + " loaded");
         TEAMS.add(t);
     }
@@ -251,7 +250,7 @@ public class Main {
             debug("Equation " + line + " added");
             EQUATIONS.add(e);
         } catch (EquationParseException e){
-            sendError(e.getMessage(),false);
+            sendError(e.getMessage(),false,e);
         }
     }
 
@@ -279,11 +278,21 @@ public class Main {
      * @param message error message to send
      * @param isCatastrophicError program will close after acknowledging message
      */
-    public static void sendError(String message, boolean isCatastrophicError){
+    public static void sendError(String message, boolean isCatastrophicError, Exception e){
         Main.log("[ERROR]:"+message);
+        if (e!=null){
+            e.printStackTrace();
+        }
         try {
+            JTextArea msg = new JTextArea(message);
+            msg.setLineWrap(true);
+            msg.setWrapStyleWord(true);
+
+            JScrollPane scrollPane = new JScrollPane(msg);
+            msg.setSize(new Dimension(600,200));
+
             //Open a Dialogue box with only "OK" as an option
-            int i = JOptionPane.showConfirmDialog(null, message,
+            int i = JOptionPane.showConfirmDialog(null, scrollPane,
                     "You done messed up", JOptionPane.DEFAULT_OPTION,JOptionPane.ERROR_MESSAGE);
 
             //If the error is catastrophic, close the program
@@ -294,13 +303,18 @@ public class Main {
                 System.exit(1);
             }
 
-        } catch (Exception e){
+        } catch (Exception e1){
             //Just in case
+            e1.printStackTrace();
             JOptionPane.showMessageDialog(null, "An error occurred while displaying an error",
                     "Yo Dawg!", JOptionPane.ERROR_MESSAGE);
 
         }
 
+    }
+
+    public static void sendError(String message, boolean isCatastrophicError){
+        sendError(message,isCatastrophicError,null);
     }
 
     /**
@@ -336,7 +350,7 @@ public class Main {
         try {
             return TEAM_NAMES.get(teamNum);
         }catch (NullPointerException e){
-
+            e.printStackTrace();
         }
         return "MISSING NAME";
     }

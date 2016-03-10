@@ -1,6 +1,5 @@
 package org.fullmetalfalcons.scouting.fileio;
 
-import org.apache.poi.hsmf.datatypes.PropertyValue;
 import org.apache.poi.hssf.util.HSSFColor;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.ss.util.CellRangeAddress;
@@ -84,9 +83,9 @@ public class Writer {
                 break;
             } catch (IOException e) {
                 if (e.getMessage().contains("The process cannot access the file because it is being used by another process")){
-                    Main.sendError("Close the Excel workbook! Press OK when done.",false);
+                    Main.sendError("Close the Excel workbook! Press OK when done.",false,e);
                 } else {
-                    Main.sendError("Error in arguments passed for results.xlsx location",true);
+                    Main.sendError("Error in arguments passed for results.xlsx location",true,e);
                 }
             }
         }

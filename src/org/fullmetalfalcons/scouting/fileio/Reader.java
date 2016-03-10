@@ -43,7 +43,7 @@ public class Reader {
             }
 
         } catch (IOException e) {
-            Main.sendError("Something is very wrong with the config file. It's probably missing. Try and find it.",true);
+            Main.sendError("Something is very wrong with the config file. It's probably missing. Try and find it.",true,e);
         }
 
 
@@ -80,9 +80,9 @@ public class Reader {
                 //If it successfully creates an NSDictionary, it passes it to a Team object
                 Main.addTeam(rootDict, f.getName());
             } catch (IOException | PropertyListFormatException | ParserConfigurationException | ParseException | SAXException e) {
-                Main.sendError("An error has occurred with one of the plists: " + f.getName() + "\n" + e.getLocalizedMessage(),false);
+                Main.sendError("An error has occurred with one of the plists: " + f.getName() + "\n" + e.getLocalizedMessage(),false,e);
             } catch (IllegalArgumentException | IndexOutOfBoundsException e){
-                Main.sendError("Someone has edited the plists... and they did a bad job",false);
+                Main.sendError("Someone has edited the plists... and they did a bad job",false,e);
             }
         }
     }
@@ -102,14 +102,15 @@ public class Reader {
                 try {
                     teamMap.put(Integer.parseInt(line.substring(0, i)), line.substring(i + 1));
                 } catch (NumberFormatException e){
+                    e.printStackTrace();
                     //Doesn't really affect the program, just don't want the error to pop up
                 }
             }
             return teamMap;
         } catch (IOException e) {
-            Main.sendError("Error loading team Names", false);
+            Main.sendError("Error loading team Names", true,e);
         }
-        return new HashMap<Integer, String>();
+        return new HashMap<>();
     }
 
 }
