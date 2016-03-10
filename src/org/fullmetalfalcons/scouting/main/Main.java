@@ -277,6 +277,7 @@ public class Main {
      *
      * @param message error message to send
      * @param isCatastrophicError program will close after acknowledging message
+     * @param e Exception to print stack trace
      */
     public static void sendError(String message, boolean isCatastrophicError, Exception e){
         Main.log("[ERROR]:"+message);

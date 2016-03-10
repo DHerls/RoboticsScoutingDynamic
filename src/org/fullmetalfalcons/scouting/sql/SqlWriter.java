@@ -66,7 +66,7 @@ public class SqlWriter {
         } catch (ClassNotFoundException e) {
             Main.sendError("Cannot find driver to read database", false, e);
         } catch (SQLException e) {
-            SqlUtil.sendSqlError("Error getting data from database",e);
+            Main.sendError("Error getting data from database",false,e);
         } catch (IOException e) {
             Main.sendError("Cannot find database specified", false, e);
         }
@@ -113,7 +113,6 @@ public class SqlWriter {
                     return;
                 }
             }
-
             records.add(t.getIntValue(Team.NUMBER_KEY));
             records.add(t.getValue(Team.COLOR_KEY));
             records.add(1+teamSet.getInt("num_matches"));
@@ -175,7 +174,7 @@ public class SqlWriter {
             SqlUtil.updateTeamRecord(c,TABLE_NAME, records.toArray(new Object[records.size()]),t.getStringValue(Team.NUMBER_KEY));
 
         } catch (SQLException e) {
-            SqlUtil.sendSqlError("Problem updating team records",e);
+            Main.sendError("Problem updating team records", false, e);
         } catch (NullPointerException e){
             Main.sendError("Cannot read team data for team " + t.getValue(Team.NUMBER_KEY),false,e);
         }
@@ -288,7 +287,7 @@ public class SqlWriter {
         } catch (ClassNotFoundException e) {
             Main.sendError("Cannot locate SQL Driver",false,e);
         } catch (SQLException e) {
-            SqlUtil.sendSqlError("Problem writing to remote database",e);
+            Main.sendError("Problem writing to remote database",false,e);
         } catch (InstantiationException e) {
             Main.sendError("Instantiation Exception",false,e);
         } catch (IllegalAccessException e) {
@@ -344,7 +343,7 @@ public class SqlWriter {
                 Main.sendError("Local database is Empty!",true);
             }
         } catch (SQLException e) {
-            SqlUtil.sendSqlError("Problem merging with remote database",e);
+            Main.sendError("Problem merging with remote database",false,e);
         }
     }
 }

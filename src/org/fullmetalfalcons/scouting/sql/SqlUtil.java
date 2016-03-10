@@ -10,30 +10,66 @@ import java.sql.*;
 import java.util.*;
 
 /**
+ * Handles low level communication with SQL databases
  *
  * Created by Dan on 2/17/2016.
  */
 @SuppressWarnings("SameParameterValue")
 class SqlUtil {
 
+    //Holds a list of SQL error codes and their messages
     private static final HashMap<String, String> SQL_CODES = new HashMap<>();
 
-    @SuppressWarnings("UnusedReturnValue")
-    public static boolean addColumn(Connection c, String tableName, String columnName, SqlType type){
-        return addColumn(c,tableName,columnName,type,0,true);
+    /**
+     * Adds a column to an already existing table in a specified SQL database
+     *
+     * @param c Conenction to the databse
+     * @param tableName Name of the table to add columns to
+     * @param columnName Name of the column to add
+     * @param type Type of column
+     */
+    public static void addColumn(Connection c, String tableName, String columnName, SqlType type){
+        addColumn(c,tableName,columnName,type,0,true);
     }
 
-    public static boolean addColumn(Connection c,String tableName, String columnName, SqlType type, int length){
-        return addColumn(c,tableName,columnName,type,length,true);
+    /**
+     * Adds a column to an already existing table in a specified SQL database
+     *
+     * @param c Conenction to the databse
+     * @param tableName Name of the table to add columns to
+     * @param columnName Name of the column to add
+     * @param type Type of column
+     * @param length Max length of the column
+     */
+    public static void addColumn(Connection c,String tableName, String columnName, SqlType type, int length){
+        addColumn(c,tableName,columnName,type,length,true);
     }
 
-    @SuppressWarnings("UnusedReturnValue")
-    public static boolean addColumn(Connection c, String tableName, String columnName, SqlType type, boolean canBeNull){
-        return addColumn(c,tableName,columnName,type,0,canBeNull);
+    /**
+     * Adds a column to an already existing table in a specified SQL database
+     *
+     * @param c Conenction to the databse
+     * @param tableName Name of the table to add columns to
+     * @param columnName Name of the column to add
+     * @param type Type of column
+     * @param canBeNull Whether the column can be null
+     */
+    public static void addColumn(Connection c, String tableName, String columnName, SqlType type, boolean canBeNull){
+        addColumn(c,tableName,columnName,type,0,canBeNull);
     }
 
+    /**
+     * Adds a column to an already existing table in a specified SQL database
+     *
+     * @param c Conenction to the databse
+     * @param tableName Name of the table to add columns to
+     * @param columnName Name of the column to add
+     * @param type Type of column
+     * @param length Max length of the column
+     * @param canBeNull Whether the column can be null
+     */
     @SuppressWarnings("WeakerAccess")
-    public static boolean addColumn(Connection c, String tableName, String columnName, SqlType type, int length, boolean canBeNull){
+    public static void addColumn(Connection c, String tableName, String columnName, SqlType type, int length, boolean canBeNull){
         try {
             Statement statement = c.createStatement();
             String sql = "ALTER TABLE " + tableName +
@@ -44,14 +80,19 @@ class SqlUtil {
             sql = sql.replace("/","_");
             statement.executeUpdate(sql);
             statement.close();
-            return true;
         } catch (SQLException e) {
-            sendSqlError("Problem adding column",e);
-            return false;
+            Main.sendError("Problem adding column", false, e);
         }
 
     }
 
+    /**
+     * Creates a table in the specified database with a single primary column
+     *
+     * @param c Connection to database
+     * @param tableName Name of table
+     * @param primaryColumn Name of primary column
+     */
     public static void createTable(Connection c, String tableName, String primaryColumn) {
         try {
             Statement statement = c.createStatement();
@@ -59,10 +100,18 @@ class SqlUtil {
             statement.executeUpdate(sql);
             statement.close();
         } catch (SQLException e) {
-            sendSqlError("Problem creating table",e);
+            Main.sendError("Problem creating table", false, e);
         }
     }
 
+    /**
+     * Checks if a team exists in a given table
+     *
+     * @param c Connection to database
+     * @param tableName Name of table
+     * @param teamNum Number of team to check
+     * @return Whether the team exists in the table
+     */
     public static boolean doesTeamRecordExist(Connection c,String tableName, int teamNum){
         try {
             Statement statement = c.createStatement();
@@ -70,46 +119,51 @@ class SqlUtil {
             ResultSet rs = statement.executeQuery(sql);
             return rs.next();
         } catch (SQLException e) {
-            sendSqlError("Problem checking team record",e);
+            Main.sendError("Problem checking team record", false, e);
             return false;
         }
     }
 
+    /**
+     * Adds a new row in a table with given team values
+     *
+     * @param c Connection to database
+     * @param tableName Name of table to insert into
+     * @param records Data to be added
+     */
     public static void addTeamRecord(Connection c, String tableName, Object[] records) {
         DatabaseMetaData meta;
-        String sql = "INSERT INTO " + tableName + " (";
         try {
             meta = c.getMetaData();
             ResultSet columnNameSet = meta.getColumns(null,null,tableName,null);
+            String base = "INSERT INTO " + tableName + " VALUES(";
             while (columnNameSet.next()){
-                sql = sql + columnNameSet.getString("COLUMN_NAME") + ", ";
+                base += "?, ";
             }
-            sql = sql.substring(0,sql.length()-2);
-            sql = sql + ") VALUES (";
-            for (Object o: records){
-                if (o instanceof Object[]){
-                    sql = sql + getArrayString((Object[]) o);
-                } else if (o instanceof Integer) {
-                    sql = sql + o;
-                } else if (o instanceof String){
-                    sql = sql + "\'"+o+"\'";
-                } else if (o instanceof Double){
-                    sql = sql + o;
+            base = base.substring(0,base.length()-2);
+            base+=")";
+            PreparedStatement statement = c.prepareStatement(base);
+            for (int i = 0; i < records.length; i++) {
+                Object o = records[i];
+                if (o instanceof Object[]) {
+                    statement.setString(i+1, getArrayString((Object[]) o));
+                } else {
+                    statement.setObject(i+1, o);
                 }
-                sql = sql + ", ";
             }
-
-            sql = sql.substring(0,sql.length()-2);
-            sql = sql + ")";
-//            System.out.println(sql);
-            Statement statement = c.createStatement();
-            statement.executeUpdate(sql);
+            statement.executeUpdate();
             statement.close();
         } catch (SQLException e) {
-            sendSqlError("Problem adding team record", e);
+            Main.sendError("Problem adding team record", false, e);
         }
     }
 
+    /**
+     * Convert array of strings to a single string enclosed by curly braces
+     *
+     * @param o String array to be converted
+     * @return String of array
+     */
     private static String getArrayString(Object[] o) {
         String result = "\'{";
         for (Object obj: o){
@@ -121,93 +175,100 @@ class SqlUtil {
         return result;
     }
 
+    /**
+     * Retrieve a sepcified team's record from a given database
+     *
+     * @param c Connection to database
+     * @param tableName name of table
+     * @param team_num number of team to retrieve
+     * @return ResultSet of team data
+     */
     public static ResultSet getTeamRecord(Connection c, String tableName, int team_num) {
         try {
             Statement statement = c.createStatement();
             return statement.executeQuery("SELECT * FROM " + tableName + " WHERE team_num=" +team_num);
         } catch (SQLException e) {
-            sendSqlError("Problem retrieving team record",e);
+            Main.sendError("Problem retrieving team record",false, e);
             return null;
         }
     }
 
+    /**
+     * Convert string of array to an array object
+     *
+     * @param match_nums String to be spliced and converted
+     * @return String array object
+     */
     public static String[] getArrayFromString(String match_nums) {
         String substring = match_nums.replace("{","").replace("}","").replace("\'","");
         return substring.split(", ");
     }
 
+    /**
+     * Replaces an existing team's data in a given table with new data
+     *
+     * @param c Connection to database
+     * @param tableName Name of table
+     * @param records Records to be passed into database
+     * @param teamNum Number of team data to be replaced
+     */
     public static void updateTeamRecord(Connection c, String tableName, Object[] records, String teamNum) {
-        DatabaseMetaData meta = null;
+        DatabaseMetaData meta;
         try {
             meta = c.getMetaData();
             ResultSet columnNameSet = meta.getColumns(null,null,tableName,null);
-            PreparedStatement statement;
-            Iterable<Object> oi = Arrays.asList(records);
-            Iterator<Object> iterator = oi.iterator();
-            Statement s = c.createStatement();
-            String base = "UPDATE " + tableName + " SET "+columnNameSet.getString("COLUMN_NAME")+" = ? WHERE team_num = " + teamNum;
+            String base = "UPDATE " + tableName + " SET ";
             while (columnNameSet.next()){
-                Object o = iterator.next();
-                if (o instanceof Object[]){
-                    base = base.replace("?",getArrayString((Object[]) o));
-                    //System.out.println(Arrays.toString((String[]) o));
-                    //System.out.println(getArrayString((Object[]) o));
-                } else if (o instanceof Integer) {
-                    base = base.replace("?",o.toString());
-                } else if (o instanceof String){
-                    base = base.replace("?","\'"+o+"\'");
-
-                } else if (o instanceof Double){
-                    base = base.replace("?",o.toString());
-                }
-
-
+                base += columnNameSet.getString("COLUMN_NAME") + "= ?, ";
             }
-            s.execute(base);
-            s.close();
+            base = base.substring(0,base.length()-2);
+            base+= "WHERE team_num=" +teamNum;
+            PreparedStatement statement = c.prepareStatement(base);
+            for (int i = 0; i < records.length; i++) {
+                Object o = records[i];
+                if (o instanceof Object[]) {
+                    statement.setString(i+1, getArrayString((Object[]) o));
+                } else {
+                    statement.setObject(i+1, o);
+                }
+            }
+            statement.executeUpdate();
+            statement.close();
         } catch (SQLException e) {
-            sendSqlError("Problem updating team record", e);
+            Main.sendError("Problem updating team record", false,e);
         }
     }
 
-
+    /**
+     * Retrieve all data from a given table in a database
+     *
+     * @param c Connection to database
+     * @param tableName Table name
+     * @return ResultSet containing all data
+     */
     public static ResultSet retrieveAll(Connection c, String tableName) {
         try {
             Statement s = c.createStatement();
             return s.executeQuery("SELECT * FROM " + tableName);
         } catch (SQLException e) {
-            sendSqlError("Problem reading database",e);
+            Main.sendError("Problem reading database",false,e);
         }
         return null;
     }
 
+    /**
+     * Drop table from given database
+     *
+     * @param c Connection to database
+     * @param tableName Name of table to drop
+     */
     public static void clearData(Connection c, String tableName) {
         try {
             Statement s = c.createStatement();
             s.execute("DROP TABLE " + tableName);
         } catch (SQLException e) {
-            sendSqlError("Problem deleting local database",e);
+            Main.sendError("Problem deleting local database",false,e);
         }
     }
 
-    public static void sendSqlError(String message, SQLException e){
-        if (SQL_CODES.isEmpty()) {
-            try (InputStream is = Main.class.getResourceAsStream("/org/fullmetalfalcons/scouting/resources/sqlcodes.txt");
-                 InputStreamReader isr = new InputStreamReader(is);
-                 BufferedReader br = new BufferedReader(isr)) {
-                String line;
-                int i;
-                while ((line = br.readLine()) != null) {
-                    i = line.indexOf(",");
-                    SQL_CODES.put(line.substring(0, i).trim(), line.substring(i + 1));
-                }
-
-
-            } catch (IOException e1) {
-                Main.sendError("Missing sytem critical files: sqlcodes.txt",true,e1);
-            }
-        }
-
-        Main.sendError(message + ": " + SQL_CODES.get(e.getSQLState()),false,e);
-    }
 }
