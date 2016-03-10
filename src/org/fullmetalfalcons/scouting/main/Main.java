@@ -1,6 +1,6 @@
 package org.fullmetalfalcons.scouting.main;
 
-import java.awt.Desktop;
+import java.awt.*;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -9,7 +9,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Random;
 
-import javax.swing.JOptionPane;
+import javax.swing.*;
 
 import org.fullmetalfalcons.scouting.elements.Element;
 import org.fullmetalfalcons.scouting.equations.Equation;
@@ -53,75 +53,103 @@ public class Main {
         try {
 
             //Crash Test Dummy \/ \/ \/
-            //String a = args[5];
+            //String a = args[20];
 
             //Program needs to be told where to look for the plist files and config file
             if(args.length<2) {
                 sendError("You have not provided a location for plists or config file", true);
             }
 
-            String plistsLocation = "";
-            String configLocation = "";
-            String excelLocation = "";
-            String SqlLocation = "";
-            boolean writeExcel = true;
+            if (!args[0].equalsIgnoreCase("remote")) {
+                String plistsLocation = "";
+                String configLocation = "";
+                String excelLocation = "";
+                String SqlLocation = "";
+                boolean writeExcel = true;
 
-            switch (args.length){
-                default:
+                switch (args.length){
+                    default:
 
-                case 5:
-                    excelLocation = args[4];
-    //                    sendError("Argument 4: " + excelLocation,false);
-                case 4:
-                    writeExcel = Boolean.parseBoolean(args[3]);
-    //                    sendError("Argument 3: " + writeExcel,false);
-                case 3:
-                    SqlLocation = args[2];
-                case 2:
-                    configLocation = args[0];
-                    plistsLocation = args[1];
-    //                    sendError("Argument 2: " + plistsLocation,false);
+                    case 5:
+                        excelLocation = args[4];
+        //                    sendError("Argument 4: " + excelLocation,false);
+                    case 4:
 
-    //                    sendError("Argument 1: " + configLocation,false);
+                        writeExcel = Boolean.parseBoolean(args[3]);
+        //                    sendError("Argument 3: " + writeExcel,false);
+                    case 3:
+                        SqlLocation = args[2];
+                    case 2:
+                        configLocation = args[0];
+                        plistsLocation = args[1];
+        //                    sendError("Argument 2: " + plistsLocation,false);
 
-                break;
+        //                    sendError("Argument 1: " + configLocation,false);
+
+                    break;
+                }
+                log("Program Starting");
+                log("Starting to load configuration");
+                //Populates ELEMENTS ArrayList from configuration file
+                Reader.loadConfig(configLocation);
+
+                if(ELEMENTS.size()==0){
+                    sendError("No Elements found in config file",true);
+                }
+
+                log(ELEMENTS.size() + " elements loaded");
+
+                log("Starting to load plists");
+
+                //Populates TEAMS ArrayList from plist files, passes location of plists
+                Reader.loadPlists(plistsLocation);
+
+                log(TEAMS.size() + " teams loaded");
+
+                TEAM_NAMES = Reader.loadTeamNames();
+
+                SqlWriter.write(SqlLocation);
+
+                if (writeExcel){
+                    log("Starting to write file");
+
+                    //Writes data to Excel spreadsheet
+                    Writer.write(excelLocation);
+                    //Asks user if they would like to open the Excel workbook
+                    exitDialogue();
+                }
+            } else {
+                try {
+                    String configLocation = args[1];
+                    String plistLocation = args[2];
+                    String sqlLocation = args[3];
+                    String teamNum = args[4];
+                    String password = args[5];
+
+                    log("Program Starting");
+                    log("Starting to load configuration");
+                    //Populates ELEMENTS ArrayList from configuration file
+                    Reader.loadConfig(configLocation);
+
+                    if(ELEMENTS.size()==0){
+                        sendError("No Elements found in config file",true);
+                    }
+
+                    log(ELEMENTS.size() + " elements loaded");
+
+                    log("Starting to load plists");
+
+                    //Populates TEAMS ArrayList from plist files, passes location of plists
+                    Reader.loadPlists(plistLocation);
+
+                    log(TEAMS.size() + " teams loaded");
+                    SqlWriter.writeRemote(sqlLocation, teamNum,password);
+                } catch (ArrayIndexOutOfBoundsException e){
+                    sendError("Not enough arguments: config plists local-database team-num password",true,e);
+                }
+
 
             }
-
-            log("Program Starting");
-            log("Starting to load configuration");
-
-
-
-            //Populates ELEMENTS ArrayList from configuration file
-            Reader.loadConfig(configLocation);
-
-            if(ELEMENTS.size()==0){
-                sendError("No Elements found in config file",true);
-            }
-
-            log(ELEMENTS.size() + " elements loaded");
-
-            log("Starting to load plists");
-
-            //Populates TEAMS ArrayList from plist files, passes location of plists
-            Reader.loadPlists(plistsLocation);
-
-            log(TEAMS.size() + " teams loaded");
-
-            TEAM_NAMES = Reader.loadTeamNames();
-
-            SqlWriter.write(SqlLocation);
-
-            if (writeExcel){
-                log("Starting to write file");
-
-                //Writes data to Excel spreadsheet
-                Writer.write(excelLocation);
-                //Asks user if they would like to open the Excel workbook
-                exitDialogue();
-            }
-
 
 
             log("Exiting program");
@@ -146,12 +174,11 @@ public class Main {
                 }
 
                 Random rand = new Random();
-                sendError(lines.get(rand.nextInt(lines.size())) + ": " + e.toString(),true);
+                sendError(lines.get(rand.nextInt(lines.size())) + ": " + e.toString(),true,e);
 
             } catch (IOException e1) {
                 //If my ego for some strange reason gets too big, this is where we admit defeat
-                e1.printStackTrace();
-                sendError("We tried to be funny and we failed. Anyways, the program crashed: " + e.toString(),true);
+                sendError("We tried to be funny and we failed. Anyways, the program crashed: " + e.toString(),true,e1);
             }
 
         }
@@ -176,7 +203,7 @@ public class Main {
             try {
                 Desktop.getDesktop().open(Writer.getResultsFile());
             }catch (IllegalArgumentException e){
-                sendError("Congratulations! You managed damage/lose the results file in the time since it was made!",true);
+                sendError("Congratulations! You managed damage/lose the results file in the time since it was made!",true,e);
             }
         }
     }
@@ -195,7 +222,7 @@ public class Main {
             debug("Element of type " + e.getType().toString() + " created");
             ELEMENTS.add(e);
         } catch (ElementParseException e) {
-            sendError("Config error: " + e.getMessage(),false);
+            sendError("Config error: " + e.getMessage(),false,e);
         }
     }
 
@@ -204,10 +231,10 @@ public class Main {
      * Adds it to TEAMS ArrayList
      *
      * @param dictionary Holds the key/value pairs for the team
-     * @param name
+     * @param fileName Name of the team's file
      */
-    public static void addTeam(NSDictionary dictionary, String name){
-        Team t = new Team(dictionary, name);
+    public static void addTeam(NSDictionary dictionary, String fileName){
+        Team t = new Team(dictionary, fileName);
         debug("Team " + t.getValue(Team.NUMBER_KEY) + " loaded");
         TEAMS.add(t);
     }
@@ -223,7 +250,7 @@ public class Main {
             debug("Equation " + line + " added");
             EQUATIONS.add(e);
         } catch (EquationParseException e){
-            sendError(e.getMessage(),false);
+            sendError(e.getMessage(),false,e);
         }
     }
 
@@ -250,12 +277,23 @@ public class Main {
      *
      * @param message error message to send
      * @param isCatastrophicError program will close after acknowledging message
+     * @param e Exception to print stack trace
      */
-    public static void sendError(String message, boolean isCatastrophicError){
+    public static void sendError(String message, boolean isCatastrophicError, Exception e){
         Main.log("[ERROR]:"+message);
+        if (e!=null){
+            e.printStackTrace();
+        }
         try {
+            JTextArea msg = new JTextArea(message);
+            msg.setLineWrap(true);
+            msg.setWrapStyleWord(true);
+
+            JScrollPane scrollPane = new JScrollPane(msg);
+            msg.setSize(new Dimension(600,200));
+
             //Open a Dialogue box with only "OK" as an option
-            int i = JOptionPane.showConfirmDialog(null, message,
+            int i = JOptionPane.showConfirmDialog(null, scrollPane,
                     "You done messed up", JOptionPane.DEFAULT_OPTION,JOptionPane.ERROR_MESSAGE);
 
             //If the error is catastrophic, close the program
@@ -266,13 +304,18 @@ public class Main {
                 System.exit(1);
             }
 
-        } catch (Exception e){
+        } catch (Exception e1){
             //Just in case
+            e1.printStackTrace();
             JOptionPane.showMessageDialog(null, "An error occurred while displaying an error",
                     "Yo Dawg!", JOptionPane.ERROR_MESSAGE);
 
         }
 
+    }
+
+    public static void sendError(String message, boolean isCatastrophicError){
+        sendError(message,isCatastrophicError,null);
     }
 
     /**
@@ -308,7 +351,7 @@ public class Main {
         try {
             return TEAM_NAMES.get(teamNum);
         }catch (NullPointerException e){
-
+            e.printStackTrace();
         }
         return "MISSING NAME";
     }

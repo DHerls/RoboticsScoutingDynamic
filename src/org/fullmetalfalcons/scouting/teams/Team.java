@@ -39,7 +39,7 @@ public class Team {
 
         } catch (NullPointerException e){
             Main.log(key);
-            Main.sendError(String.format("File %s is missing key %s, defaulting to 0",fileName,key),true);
+            Main.sendError(String.format("File %s is missing key %s, defaulting to 0",fileName,key),true,e);
             return "";
 
         }
@@ -54,10 +54,10 @@ public class Team {
 
 
         } catch (NullPointerException e){
-            Main.sendError(String.format("File %s is missing key %s, defaulting to 0",fileName,key),false);
+            Main.sendError(String.format("File %s is missing key %s, defaulting to 0",fileName,key),false,e);
             return 0;
         }catch (NumberFormatException e){
-            Main.sendError(String.format("Key %s in file %s is not an Integer",key,fileName),false);
+            Main.sendError(String.format("Key %s in file %s is not an Integer",key,fileName),false,e);
 
         }
 
@@ -73,10 +73,10 @@ public class Team {
 
 
         } catch (NullPointerException e){
-            Main.sendError(String.format("File %s is missing key %s, defaulting to 0",fileName,key),false);
+            Main.sendError(String.format("File %s is missing key %s, defaulting to 0",fileName,key),false,e);
             return 0.0;
         }catch (NumberFormatException e){
-            Main.sendError(String.format("Key %s in file %s is not an Integer",key,fileName),false);
+            Main.sendError(String.format("Key %s in file %s is not an Integer",key,fileName),false,e);
             return 0.0;
         }
 
@@ -90,14 +90,14 @@ public class Team {
 
 
         } catch (NullPointerException e){
-            Main.sendError(String.format("File %s is missing key %s, defaulting to 0",fileName,key),false);
+            Main.sendError(String.format("File %s is missing key %s, defaulting to 0",fileName,key),false,e);
             return 0.0;
 
         } catch (NumberFormatException e){
             try {
                 return Integer.parseInt(dictionary.get(key).toJavaObject().toString().trim());
             } catch (NumberFormatException e1){
-                Main.sendError(String.format("Key %s in file %s is not a number",key,fileName),false);
+                Main.sendError(String.format("Key %s in file %s is not a number",key,fileName),false,e);
                 return 0.0;
             }
         }
@@ -112,7 +112,7 @@ public class Team {
 
 
         } catch (NullPointerException e){
-            Main.sendError(String.format("File %s is missing key %s, defaulting to 0",fileName,key),false);
+            Main.sendError(String.format("File %s is missing key %s, defaulting to 0",fileName,key),false,e);
             return 0.0;
 
         } catch (NumberFormatException e){
