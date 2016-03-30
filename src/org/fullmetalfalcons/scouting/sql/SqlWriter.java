@@ -254,8 +254,16 @@ public class SqlWriter {
 
     public static void writeRemote(String sqlLocation, String teamNum, String password) {
         try {
-            String baseUsername = "ridget35_";
-            String urlBase = "jdbc:mysql://ridgetopclub.com:3306/";
+            //Driver to read SQLite databaes
+            Class.forName("org.sqlite.JDBC").newInstance();
+            File file = new File((sqlLocation.isEmpty()? sqlLocation: sqlLocation.charAt(sqlLocation.length()-1)=='/'?sqlLocation:sqlLocation+"/") + DATABASE_NAME);
+            System.out.println(file.getAbsolutePath());
+            c = DriverManager.getConnection("jdbc:sqlite:" + file.getAbsolutePath());
+
+            //This String will be prepended to all team numbers i.e. base_4557
+            String baseUsername = "";
+            //This String should be the URL of the SQL Server
+            String urlBase = "jdbc:mysql://fullmetalfalcons.com:3306/";
             String username = baseUsername + teamNum;
             Class.forName("com.mysql.jdbc.Driver").newInstance();
             remoteConnection = DriverManager.getConnection(urlBase + username, username, password );
@@ -275,14 +283,10 @@ public class SqlWriter {
                 Main.log("Table " + TABLE_NAME + " exists");
             }
 
-            //Driver to read SQLite databaes
-            Class.forName("org.sqlite.JDBC").newInstance();
-            File file = new File((sqlLocation.isEmpty()? sqlLocation: sqlLocation.charAt(sqlLocation.length()-1)=='/'?sqlLocation:sqlLocation+"/") + DATABASE_NAME);
-            c = DriverManager.getConnection("jdbc:sqlite:" + file.getAbsolutePath());
-
             mergeDatabases();
 
             c.close();
+            remoteConnection.close();
 
         } catch (ClassNotFoundException e) {
             Main.sendError("Cannot locate SQL Driver",false,e);
@@ -302,7 +306,7 @@ public class SqlWriter {
                 while (local.next()) {
                     if (SqlUtil.doesTeamRecordExist(remoteConnection,TABLE_NAME,Integer.parseInt(local.getString(Team.NUMBER_KEY)))){
                         ResultSet remote = SqlUtil.getTeamRecord(remoteConnection,TABLE_NAME,Integer.parseInt(local.getString(Team.NUMBER_KEY)));
-                        if (remote!=null) {
+                        if (remote!=null && remote.next()) {
                             DatabaseMetaData meta = remoteConnection.getMetaData();
                             ResultSet columnNameSet = meta.getColumns(null,null,TABLE_NAME,null);
                             ArrayList<Object> teamData = new ArrayList<>();
@@ -338,7 +342,7 @@ public class SqlWriter {
                         SqlUtil.addTeamRecord(remoteConnection,TABLE_NAME,teamData.toArray(new Object[teamData.size()]));
                     }
                 }
-                SqlUtil.clearData(c,TABLE_NAME);
+
             } else {
                 Main.sendError("Local database is Empty!",true);
             }

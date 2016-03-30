@@ -19,6 +19,8 @@ class SqlUtil {
 
     //Holds a list of SQL error codes and their messages
     private static final HashMap<String, String> SQL_CODES = new HashMap<>();
+    private static PreparedStatement insertStatement;
+    private static PreparedStatement updateStatement;
 
     /**
      * Adds a column to an already existing table in a specified SQL database
@@ -134,25 +136,26 @@ class SqlUtil {
     public static void addTeamRecord(Connection c, String tableName, Object[] records) {
         DatabaseMetaData meta;
         try {
-            meta = c.getMetaData();
-            ResultSet columnNameSet = meta.getColumns(null,null,tableName,null);
-            String base = "INSERT INTO " + tableName + " VALUES(";
-            while (columnNameSet.next()){
-                base += "?, ";
+            if (insertStatement==null) {
+                meta = c.getMetaData();
+                ResultSet columnNameSet = meta.getColumns(null,null,tableName,null);
+                String base = "INSERT INTO " + tableName + " VALUES(";
+                while (columnNameSet.next()){
+                    base += "?, ";
+                }
+                base = base.substring(0,base.length()-2);
+                base+=")";
+                insertStatement = c.prepareStatement(base);
             }
-            base = base.substring(0,base.length()-2);
-            base+=")";
-            PreparedStatement statement = c.prepareStatement(base);
             for (int i = 0; i < records.length; i++) {
                 Object o = records[i];
                 if (o instanceof Object[]) {
-                    statement.setString(i+1, getArrayString((Object[]) o));
+                    insertStatement.setString(i+1, getArrayString((Object[]) o));
                 } else {
-                    statement.setObject(i+1, o);
+                    insertStatement.setObject(i+1, o);
                 }
             }
-            statement.executeUpdate();
-            statement.close();
+            insertStatement.executeUpdate();
         } catch (SQLException e) {
             Main.sendError("Problem adding team record", false, e);
         }
@@ -215,25 +218,29 @@ class SqlUtil {
     public static void updateTeamRecord(Connection c, String tableName, Object[] records, String teamNum) {
         DatabaseMetaData meta;
         try {
-            meta = c.getMetaData();
-            ResultSet columnNameSet = meta.getColumns(null,null,tableName,null);
-            String base = "UPDATE " + tableName + " SET ";
-            while (columnNameSet.next()){
-                base += columnNameSet.getString("COLUMN_NAME") + "= ?, ";
+            if (updateStatement==null) {
+                meta = c.getMetaData();
+                ResultSet columnNameSet = meta.getColumns(null,null,tableName,null);
+                String base = "UPDATE " + tableName + " SET ";
+                while (columnNameSet.next()){
+                    base += columnNameSet.getString("COLUMN_NAME") + "= ?, ";
+                }
+                base = base.substring(0,base.length()-2);
+                base+= " WHERE team_num = ?";
+                System.out.println(base);
+                updateStatement = c.prepareStatement(base);
             }
-            base = base.substring(0,base.length()-2);
-            base+= "WHERE team_num=" +teamNum;
-            PreparedStatement statement = c.prepareStatement(base);
-            for (int i = 0; i < records.length; i++) {
+            int i;
+            for (i = 0; i < records.length; i++) {
                 Object o = records[i];
                 if (o instanceof Object[]) {
-                    statement.setString(i+1, getArrayString((Object[]) o));
+                    updateStatement.setString(i+1, getArrayString((Object[]) o));
                 } else {
-                    statement.setObject(i+1, o);
+                    updateStatement.setObject(i+1, o);
                 }
             }
-            statement.executeUpdate();
-            statement.close();
+            updateStatement.setInt(i+1,Integer.parseInt(teamNum));
+            updateStatement.executeUpdate();
         } catch (SQLException e) {
             Main.sendError("Problem updating team record", false,e);
         }
