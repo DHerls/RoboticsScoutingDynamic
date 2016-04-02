@@ -109,7 +109,8 @@ public class SqlWriter {
             }
             for (String m: matches) {
                 //If the match number already exists
-                if (t.getValue(Team.MATCH_KEY).equals(m)) {
+                System.out.println(m);
+                if (t.getStringValue(Team.MATCH_KEY).equalsIgnoreCase(m.trim())) {
                     return;
                 }
             }
